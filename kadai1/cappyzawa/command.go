@@ -28,6 +28,9 @@ func NewCommand(iFilePath IFilePath, decoder, encoder Converter) Command {
 
 // Run - execute command
 func (c *command) Run(dir, from, to string) error {
+	if _, err := os.Stat(dir); err != nil {
+		return err
+	}
 	fExt := fmt.Sprintf(".%s", from)
 	err := c.iFilePath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if c.iFilePath.Ext(path) == fExt {
