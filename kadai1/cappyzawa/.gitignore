@@ -1,0 +1,3 @@
+conv
+fixtures/jpeg/*.png
+fixtures/png/*.jpeg
