@@ -49,9 +49,13 @@ func (c *CLI) Execute(args []string) int {
 		return 1
 	}
 	command := conv.NewCommand(decoder, encoder)
-	if err := command.Run(dir, f, t); err != nil {
+	files, err := command.Run(dir, f, t)
+	if err != nil {
 		fmt.Fprintf(c.ErrStream, "%s\n", err.Error())
 		return 1
+	}
+	for _, file := range files {
+		fmt.Fprintf(c.OutStream, "created file: %s\n", file)
 	}
 	return 0
 }

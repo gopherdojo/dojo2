@@ -9,7 +9,7 @@ import (
 
 // Command - interface defining a method for command
 type Command interface {
-	Run(dir string, from string, to string) error
+	Run(dir, from, to string) ([]string, error)
 }
 
 type command struct {
@@ -26,21 +26,26 @@ func NewCommand(decoder, encoder Converter) Command {
 }
 
 // Run - execute command
-func (c *command) Run(dir, from, to string) error {
+func (c *command) Run(dir, from, to string) ([]string, error) {
 	if _, err := os.Stat(dir); err != nil {
-		return err
+		return nil, err
 	}
 	fExt := fmt.Sprintf(".%s", from)
+	var createdFiles []string
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if filepath.Ext(path) == fExt {
-			return c.convert(path, to)
+			if err := c.convert(path, to); err !=nil {
+				return err
+			}
+			createdFiles = append(createdFiles, path)
+			return nil
 		}
 		return nil
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return createdFiles, nil
 }
 
 func (c *command) convert(path, to string) error {
