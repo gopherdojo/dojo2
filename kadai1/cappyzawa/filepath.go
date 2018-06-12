@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 )
 
-// IFilePath - interface defining a method for path/filepath
+// IFilePath - interface defining methods for path/filepath
 type IFilePath interface {
 	Walk(root string, walkFn filepath.WalkFunc) error
 	Ext(path string) string

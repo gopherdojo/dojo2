@@ -8,10 +8,12 @@ import (
 	"os"
 )
 
+// CLI - struct having stream fields
 type CLI struct {
 	OutStream, ErrStream io.Writer
 }
 
+// Execute - execute conversion
 func (c *CLI) Execute(args []string) int {
 	var f, t string
 	flags := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
