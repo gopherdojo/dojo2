@@ -48,8 +48,7 @@ func (c *CLI) Execute(args []string) int {
 		fmt.Fprint(c.ErrStream, "invalid format\n")
 		return 1
 	}
-	iFilePath := conv.NewIFilePath()
-	command := conv.NewCommand(iFilePath, decoder, encoder)
+	command := conv.NewCommand(decoder, encoder)
 	if err := command.Run(dir, f, t); err != nil {
 		fmt.Fprintf(c.ErrStream, "%s\n", err.Error())
 		return 1

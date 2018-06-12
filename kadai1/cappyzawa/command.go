@@ -3,6 +3,7 @@ package conv
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -12,17 +13,15 @@ type Command interface {
 }
 
 type command struct {
-	iFilePath IFilePath
-	decoder   Converter
-	encoder   Converter
+	decoder Converter
+	encoder Converter
 }
 
 // NewCommand - initialize Command
-func NewCommand(iFilePath IFilePath, decoder, encoder Converter) Command {
+func NewCommand(decoder, encoder Converter) Command {
 	return &command{
-		iFilePath: iFilePath,
-		decoder:   decoder,
-		encoder:   encoder,
+		decoder: decoder,
+		encoder: encoder,
 	}
 }
 
@@ -32,8 +31,8 @@ func (c *command) Run(dir, from, to string) error {
 		return err
 	}
 	fExt := fmt.Sprintf(".%s", from)
-	err := c.iFilePath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if c.iFilePath.Ext(path) == fExt {
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if filepath.Ext(path) == fExt {
 			return c.convert(path, to)
 		}
 		return nil
@@ -69,10 +68,10 @@ func (c *command) convert(path, to string) error {
 
 func (c *command) createOutputFile(path, to string) (*os.File, error) {
 	tExt := fmt.Sprintf(".%s", to)
-	baseDir := c.iFilePath.Dir(path)
-	baseFile := c.iFilePath.Base(path)
-	baseExt := c.iFilePath.Ext(path)
+	baseDir := filepath.Dir(path)
+	baseFile := filepath.Base(path)
+	baseExt := filepath.Ext(path)
 	newFileName := strings.Replace(baseFile, baseExt, tExt, 1)
-	newFilePath := c.iFilePath.Join(baseDir, newFileName)
+	newFilePath := filepath.Join(baseDir, newFileName)
 	return os.Create(newFilePath)
 }
