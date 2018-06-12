@@ -30,7 +30,6 @@ func NewCommand(iFilePath IFilePath, decoder, encoder Converter) Command {
 func (c *command) Run(dir, from, to string) error {
 	fExt := fmt.Sprintf(".%s", from)
 	err := c.iFilePath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		fmt.Println(path)
 		if c.iFilePath.Ext(path) == fExt {
 			return c.convert(path, to)
 		}

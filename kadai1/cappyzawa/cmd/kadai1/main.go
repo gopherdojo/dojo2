@@ -36,6 +36,7 @@ func (c *CLI) Execute(args []string) int {
 		decoder = new(conv.Png)
 	} else {
 		fmt.Fprint(c.ErrStream, "invalid format\n")
+		return 1
 	}
 
 	var encoder conv.Converter
@@ -45,6 +46,7 @@ func (c *CLI) Execute(args []string) int {
 		encoder = new(conv.Png)
 	} else {
 		fmt.Fprint(c.ErrStream, "invalid format\n")
+		return 1
 	}
 	iFilePath := conv.NewIFilePath()
 	command := conv.NewCommand(iFilePath, decoder, encoder)
