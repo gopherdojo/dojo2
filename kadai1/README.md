@@ -1,6 +1,11 @@
 # 実行方法
 ```
+go build -o imgconv main.go
 ./imgconv -i jpg -o png images
+```
+or 
+```
+go run main -i jpg -o png images
 ```
 
 ## options
