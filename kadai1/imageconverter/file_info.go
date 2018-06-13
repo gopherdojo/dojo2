@@ -7,12 +7,12 @@ type FileInfo struct {
 	Path FilePath
 }
 
-// Ext hogehoge
+// Ext .付き拡張子の文字列を返す
 func (fi *FileInfo) Ext() string {
 	return filepath.Ext(string(fi.Path))
 }
 
-// Format hogehoge
+// Format .なし拡張子の文字列を返す
 func (fi *FileInfo) Format() Format {
 	return Format(fi.Ext()[1:])
 }

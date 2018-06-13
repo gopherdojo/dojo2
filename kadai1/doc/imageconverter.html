@@ -19,7 +19,7 @@
 		
 		<div id="short-nav">
 			<dl>
-			<dd><code>import "./imageconverter/"</code></dd>
+			<dd><code>import "./imageconverter"</code></dd>
 			</dl>
 			<dl>
 			<dd><a href="#pkg-overview" class="overviewLink">Overview</a></dd>
@@ -100,6 +100,9 @@
 				
 					
 					<dd>&nbsp; &nbsp; <a href="#Format.Ext">func (f *Format) Ext() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#Format.NormalizedFormat">func (f *Format) NormalizedFormat() Format</a></dd>
 				
 			
 				
@@ -321,12 +324,12 @@ FileInfo FilePathを基に、付属情報を取得できる関数が定義され
 
 			
 				
-				<h3 id="FileInfo.Ext">func (*FileInfo) <a href="/src/target/file_info.go?s=195:227#L1">Ext</a>
+				<h3 id="FileInfo.Ext">func (*FileInfo) <a href="/src/target/file_info.go?s=224:256#L1">Ext</a>
 					<a class="permalink" href="#FileInfo.Ext">&#xb6;</a>
 				</h3>
 				<pre>func (fi *<a href="#FileInfo">FileInfo</a>) Ext() <a href="/pkg/builtin/#string">string</a></pre>
 				<p>
-Ext hogehoge
+Ext .付き拡張子の文字列を返す
 </p>
 
 				
@@ -334,12 +337,12 @@ Ext hogehoge
 				
 			
 				
-				<h3 id="FileInfo.Format">func (*FileInfo) <a href="/src/target/file_info.go?s=290:325#L6">Format</a>
+				<h3 id="FileInfo.Format">func (*FileInfo) <a href="/src/target/file_info.go?s=348:383#L6">Format</a>
 					<a class="permalink" href="#FileInfo.Format">&#xb6;</a>
 				</h3>
 				<pre>func (fi *<a href="#FileInfo">FileInfo</a>) Format() <a href="#Format">Format</a></pre>
 				<p>
-Format hogehoge
+Format .なし拡張子の文字列を返す
 </p>
 
 				
@@ -399,6 +402,19 @@ Format ファイルのフォーマットを表す型
 				<pre>func (f *<a href="#Format">Format</a>) Ext() <a href="/pkg/builtin/#string">string</a></pre>
 				<p>
 Ext 拡張子を取得する関数
+</p>
+
+				
+				
+				
+			
+				
+				<h3 id="Format.NormalizedFormat">func (*Format) <a href="/src/target/format.go?s=335:377#L2">NormalizedFormat</a>
+					<a class="permalink" href="#Format.NormalizedFormat">&#xb6;</a>
+				</h3>
+				<pre>func (f *<a href="#Format">Format</a>) NormalizedFormat() <a href="#Format">Format</a></pre>
+				<p>
+NormalizedFormat 本ツール内で扱いやすいフォーマットに変換する。(jpeg =&gt; jpg をやりたいがための実装)
 </p>
 
 				
