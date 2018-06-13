@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/kaznishi/study-go/homework1/imageconverter"
+	"github.com/gopherdojo/dojo2/kadai1/imageconverter"
 )
 
 var (
