@@ -14,7 +14,7 @@ go run main -i jpg -o png images
 -o 変換後画像形式
 
 
-##説明
+## 説明
 converter/Convertによって指定され他ディレクトリ以下を再帰的に指定された形式で画像変換する.
 
 変換には"image/png","image/jpeg","image/gif"を使用する.
