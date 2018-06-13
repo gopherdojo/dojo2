@@ -1,0 +1,452 @@
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script type='text/javascript'>
+	document.ANALYSIS_DATA = ;
+	document.CALLGRAPH = ;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "./imageconverter/"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				
+				
+			</div>
+		</div>
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+			
+				
+				<dd><a href="#CommandValidator">type CommandValidator</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#CommandValidator.ExtValidate">func (cv *CommandValidator) ExtValidate(f Format) bool</a></dd>
+				
+			
+				
+				<dd><a href="#Converter">type Converter</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#Converter.Run">func (c *Converter) Run(f FileInfo, inputFormat Format, outputFormat Format)</a></dd>
+				
+			
+				
+				<dd><a href="#Facade">type Facade</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#Facade.Run">func (f *Facade) Run(targetPath FilePath, inputFormat Format, outputFormat Format)</a></dd>
+				
+			
+				
+				<dd><a href="#FileInfo">type FileInfo</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#FileInfo.Ext">func (fi *FileInfo) Ext() string</a></dd>
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#FileInfo.Format">func (fi *FileInfo) Format() Format</a></dd>
+				
+			
+				
+				<dd><a href="#FilePath">type FilePath</a></dd>
+				
+				
+			
+				
+				<dd><a href="#Format">type Format</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#Format.Ext">func (f *Format) Ext() string</a></dd>
+				
+			
+				
+				<dd><a href="#Searcher">type Searcher</a></dd>
+				
+				
+					
+					<dd>&nbsp; &nbsp; <a href="#Searcher.Run">func (s *Searcher) Run(target FileInfo) []FileInfo</a></dd>
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="/src/target/command_validator.go">command_validator.go</a>
+			
+				<a href="/src/target/converter.go">converter.go</a>
+			
+				<a href="/src/target/facade.go">facade.go</a>
+			
+				<a href="/src/target/file_info.go">file_info.go</a>
+			
+				<a href="/src/target/file_path.go">file_path.go</a>
+			
+				<a href="/src/target/format.go">format.go</a>
+			
+				<a href="/src/target/searcher.go">searcher.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		<div id="pkg-callgraph" class="toggle" style="display: none">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Internal Call Graph section">Internal call graph ▹</h2>
+		</div> <!-- .expanded -->
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Internal Call Graph section">Internal call graph ▾</h2>
+			<p>
+			  In the call graph viewer below, each node
+			  is a function belonging to this package
+			  and its children are the functions it
+			  calls&mdash;perhaps dynamically.
+			</p>
+			<p>
+			  The root nodes are the entry points of the
+			  package: functions that may be called from
+			  outside the package.
+			  There may be non-exported or anonymous
+			  functions among them if they are called
+			  dynamically from another package.
+			</p>
+			<p>
+			  Click a node to visit that function's source code.
+			  From there you can visit its callers by
+			  clicking its declaring <code>func</code>
+			  token.
+			</p>
+			<p>
+			  Functions may be omitted if they were
+			  determined to be unreachable in the
+			  particular programs or tests that were
+			  analyzed.
+			</p>
+			<!-- Zero means show all package entry points. -->
+			<ul style="margin-left: 0.5in" id="callgraph-0" class="treeview"></ul>
+		</div>
+		</div> <!-- #pkg-callgraph -->
+
+		
+		
+		
+		
+			
+			
+			<h2 id="CommandValidator">type <a href="/src/target/command_validator.go?s=82:112#L1">CommandValidator</a>
+				<a class="permalink" href="#CommandValidator">&#xb6;</a>
+			</h2>
+			<p>
+CommandValidator mainで取得したoptionの検査器
+</p>
+
+			<pre>type CommandValidator struct{}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="CommandValidator.ExtValidate">func (*CommandValidator) <a href="/src/target/command_validator.go?s=167:221#L1">ExtValidate</a>
+					<a class="permalink" href="#CommandValidator.ExtValidate">&#xb6;</a>
+				</h3>
+				<pre>func (cv *<a href="#CommandValidator">CommandValidator</a>) ExtValidate(f <a href="#Format">Format</a>) <a href="/pkg/builtin/#bool">bool</a></pre>
+				<p>
+ExtValidate 対象フォーマットならばtrue
+</p>
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Converter">type <a href="/src/target/converter.go?s=129:152#L2">Converter</a>
+				<a class="permalink" href="#Converter">&#xb6;</a>
+			</h2>
+			<p>
+Converter 画像ファイル変換器
+</p>
+
+			<pre>type Converter struct{}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="Converter.Run">func (*Converter) <a href="/src/target/converter.go?s=252:332#L5">Run</a>
+					<a class="permalink" href="#Converter.Run">&#xb6;</a>
+				</h3>
+				<pre>func (c *<a href="#Converter">Converter</a>) Run(
+    f <a href="#FileInfo">FileInfo</a>,
+    inputFormat <a href="#Format">Format</a>,
+    outputFormat <a href="#Format">Format</a>)</pre>
+				<p>
+Run 画像を変換する。対象フォーマットではないファイルは無視する。
+</p>
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Facade">type <a href="/src/target/facade.go?s=60:80#L1">Facade</a>
+				<a class="permalink" href="#Facade">&#xb6;</a>
+			</h2>
+			<p>
+Facade mainからの命令窓口
+</p>
+
+			<pre>type Facade struct{}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="Facade.Run">func (*Facade) <a href="/src/target/facade.go?s=200:286#L1">Run</a>
+					<a class="permalink" href="#Facade.Run">&#xb6;</a>
+				</h3>
+				<pre>func (f *<a href="#Facade">Facade</a>) Run(
+    targetPath <a href="#FilePath">FilePath</a>,
+    inputFormat <a href="#Format">Format</a>,
+    outputFormat <a href="#Format">Format</a>)</pre>
+				<p>
+Run Searcherを使ってファイル群を走査、Converterを使ってファイル群を変換処理にかける
+</p>
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="FileInfo">type <a href="/src/target/file_info.go?s=138:177#L1">FileInfo</a>
+				<a class="permalink" href="#FileInfo">&#xb6;</a>
+			</h2>
+			<p>
+FileInfo FilePathを基に、付属情報を取得できる関数が定義された型
+</p>
+
+			<pre>type FileInfo struct {
+<span id="FileInfo.Path"></span>    Path <a href="#FilePath">FilePath</a>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="FileInfo.Ext">func (*FileInfo) <a href="/src/target/file_info.go?s=195:227#L1">Ext</a>
+					<a class="permalink" href="#FileInfo.Ext">&#xb6;</a>
+				</h3>
+				<pre>func (fi *<a href="#FileInfo">FileInfo</a>) Ext() <a href="/pkg/builtin/#string">string</a></pre>
+				<p>
+Ext hogehoge
+</p>
+
+				
+				
+				
+			
+				
+				<h3 id="FileInfo.Format">func (*FileInfo) <a href="/src/target/file_info.go?s=290:325#L6">Format</a>
+					<a class="permalink" href="#FileInfo.Format">&#xb6;</a>
+				</h3>
+				<pre>func (fi *<a href="#FileInfo">FileInfo</a>) Format() <a href="#Format">Format</a></pre>
+				<p>
+Format hogehoge
+</p>
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="FilePath">type <a href="/src/target/file_path.go?s=67:87#L1">FilePath</a>
+				<a class="permalink" href="#FilePath">&#xb6;</a>
+			</h2>
+			<p>
+FilePath ファイルパスを表す型
+</p>
+
+			<pre>type FilePath <a href="/pkg/builtin/#string">string</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+			
+			
+			<h2 id="Format">type <a href="/src/target/format.go?s=80:98#L1">Format</a>
+				<a class="permalink" href="#Format">&#xb6;</a>
+			</h2>
+			<p>
+Format ファイルのフォーマットを表す型
+</p>
+
+			<pre>type Format <a href="/pkg/builtin/#string">string</a></pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="Format.Ext">func (*Format) <a href="/src/target/format.go?s=138:167#L1">Ext</a>
+					<a class="permalink" href="#Format.Ext">&#xb6;</a>
+				</h3>
+				<pre>func (f *<a href="#Format">Format</a>) Ext() <a href="/pkg/builtin/#string">string</a></pre>
+				<p>
+Ext 拡張子を取得する関数
+</p>
+
+				
+				
+				
+			
+		
+			
+			
+			<h2 id="Searcher">type <a href="/src/target/searcher.go?s=127:149#L1">Searcher</a>
+				<a class="permalink" href="#Searcher">&#xb6;</a>
+			</h2>
+			<p>
+Searcher 対象ディレクトリファイルの検索器
+</p>
+
+			<pre>type Searcher struct{}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+				
+				<h3 id="Searcher.Run">func (*Searcher) <a href="/src/target/searcher.go?s=204:254#L2">Run</a>
+					<a class="permalink" href="#Searcher.Run">&#xb6;</a>
+				</h3>
+				<pre>func (s *<a href="#Searcher">Searcher</a>) Run(target <a href="#FileInfo">FileInfo</a>) []<a href="#FileInfo">FileInfo</a></pre>
+				<p>
+Run 対象ディレクトリを再帰的に走査
+</p>
+
+				
+				
+				
+			
+		
+	
+
+	
+
+
+
+
+
