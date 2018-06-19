@@ -1,0 +1,259 @@
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script type='text/javascript'>
+	document.ANALYSIS_DATA = ;
+	document.CALLGRAPH = ;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "./converter"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				<p>
+Package converter Overview
+</p>
+
+			</div>
+		</div>
+		
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="#ConvertImagesFromJpgToPngInDir">func ConvertImagesFromJpgToPngInDir(dir string)</a></dd>
+			
+				
+				<dd><a href="#ConvertImagesFromPngToJpgInDir">func ConvertImagesFromPngToJpgInDir(dir string)</a></dd>
+			
+				
+				<dd><a href="#ConvertJpgToPng">func ConvertJpgToPng(imageFile *MyImageFile) error</a></dd>
+			
+				
+				<dd><a href="#ConvertPngToJpg">func ConvertPngToJpg(imageFile *MyImageFile) error</a></dd>
+			
+				
+				<dd><a href="#GetFileNameWithoutExt">func GetFileNameWithoutExt(path string) string</a></dd>
+			
+				
+				<dd><a href="#GetFilepathListByExt">func GetFilepathListByExt(dir string, ext string) []string</a></dd>
+			
+			
+				
+				<dd><a href="#MyImageFile">type MyImageFile</a></dd>
+				
+				
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h3>Package files</h3>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="/src/target/converter.go">converter.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		<div id="pkg-callgraph" class="toggle" style="display: none">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Internal Call Graph section">Internal call graph ▹</h2>
+		</div> <!-- .expanded -->
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Internal Call Graph section">Internal call graph ▾</h2>
+			<p>
+			  In the call graph viewer below, each node
+			  is a function belonging to this package
+			  and its children are the functions it
+			  calls&mdash;perhaps dynamically.
+			</p>
+			<p>
+			  The root nodes are the entry points of the
+			  package: functions that may be called from
+			  outside the package.
+			  There may be non-exported or anonymous
+			  functions among them if they are called
+			  dynamically from another package.
+			</p>
+			<p>
+			  Click a node to visit that function's source code.
+			  From there you can visit its callers by
+			  clicking its declaring <code>func</code>
+			  token.
+			</p>
+			<p>
+			  Functions may be omitted if they were
+			  determined to be unreachable in the
+			  particular programs or tests that were
+			  analyzed.
+			</p>
+			<!-- Zero means show all package entry points. -->
+			<ul style="margin-left: 0.5in" id="callgraph-0" class="treeview"></ul>
+		</div>
+		</div> <!-- #pkg-callgraph -->
+
+		
+		
+		
+			
+			
+			<h2 id="ConvertImagesFromJpgToPngInDir">func <a href="/src/target/converter.go?s=400:447#L11">ConvertImagesFromJpgToPngInDir</a>
+				<a class="permalink" href="#ConvertImagesFromJpgToPngInDir">&#xb6;</a>
+			</h2>
+			<pre>func ConvertImagesFromJpgToPngInDir(dir <a href="/pkg/builtin/#string">string</a>)</pre>
+			<p>
+ConvertImagesFromJpgToPngInDir converts all jpg images to png in target directory.
+</p>
+
+			
+			
+
+		
+			
+			
+			<h2 id="ConvertImagesFromPngToJpgInDir">func <a href="/src/target/converter.go?s=943:990#L23">ConvertImagesFromPngToJpgInDir</a>
+				<a class="permalink" href="#ConvertImagesFromPngToJpgInDir">&#xb6;</a>
+			</h2>
+			<pre>func ConvertImagesFromPngToJpgInDir(dir <a href="/pkg/builtin/#string">string</a>)</pre>
+			<p>
+ConvertImagesFromPngToJpgInDir converts all png images to jpg in target directory.
+</p>
+
+			
+			
+
+		
+			
+			
+			<h2 id="ConvertJpgToPng">func <a href="/src/target/converter.go?s=1876:1926#L52">ConvertJpgToPng</a>
+				<a class="permalink" href="#ConvertJpgToPng">&#xb6;</a>
+			</h2>
+			<pre>func ConvertJpgToPng(imageFile *<a href="#MyImageFile">MyImageFile</a>) <a href="/pkg/builtin/#error">error</a></pre>
+			<p>
+ConvertJpgToPng convert target jpg image to png.
+</p>
+
+			
+			
+
+		
+			
+			
+			<h2 id="ConvertPngToJpg">func <a href="/src/target/converter.go?s=2586:2636#L84">ConvertPngToJpg</a>
+				<a class="permalink" href="#ConvertPngToJpg">&#xb6;</a>
+			</h2>
+			<pre>func ConvertPngToJpg(imageFile *<a href="#MyImageFile">MyImageFile</a>) <a href="/pkg/builtin/#error">error</a></pre>
+			<p>
+ConvertPngToJpg convert target png image to jpg.
+</p>
+
+			
+			
+
+		
+			
+			
+			<h2 id="GetFileNameWithoutExt">func <a href="/src/target/converter.go?s=3307:3353#L116">GetFileNameWithoutExt</a>
+				<a class="permalink" href="#GetFileNameWithoutExt">&#xb6;</a>
+			</h2>
+			<pre>func GetFileNameWithoutExt(path <a href="/pkg/builtin/#string">string</a>) <a href="/pkg/builtin/#string">string</a></pre>
+			<p>
+GetFileNameWithoutExt returns the filename without file extension
+</p>
+
+			
+			
+
+		
+			
+			
+			<h2 id="GetFilepathListByExt">func <a href="/src/target/converter.go?s=1488:1546#L35">GetFilepathListByExt</a>
+				<a class="permalink" href="#GetFilepathListByExt">&#xb6;</a>
+			</h2>
+			<pre>func GetFilepathListByExt(dir <a href="/pkg/builtin/#string">string</a>, ext <a href="/pkg/builtin/#string">string</a>) []<a href="/pkg/builtin/#string">string</a></pre>
+			<p>
+GetFilepathListByExt returns the filepath list by the extention in target directory.
+</p>
+
+			
+			
+
+		
+		
+			
+			
+			<h2 id="MyImageFile">type <a href="/src/target/converter.go?s=172:312#L4">MyImageFile</a>
+				<a class="permalink" href="#MyImageFile">&#xb6;</a>
+			</h2>
+			<p>
+MyImageFile contains fileExt and filepath
+</p>
+
+			<pre>type MyImageFile struct {
+    <span class="comment">// contains filtered or unexported fields</span>
+}</pre>
+
+			
+
+			
+
+			
+			
+			
+
+			
+
+			
+		
+	
+
+	
+
+
+
+
+
