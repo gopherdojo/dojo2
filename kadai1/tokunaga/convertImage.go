@@ -2,34 +2,62 @@ package tokunaga
 
 import (
 	"fmt"
+	"image"
 	"image/jpeg"
 	"image/png"
-	"os"
 	"io"
-	"image"
+	"os"
 )
 
-type Ext interface {
-	Decede(r io.Reader) (image.Image, error)
-	Encode(w io.Writer, img image.Image) error
+type PngWrapper string
+type JpegWrapper string
+
+type ImageConverter interface {
+	Decode(reader io.Reader) (image.Image, error)
+	Encode(writer io.Writer, image image.Image) error
+	Ext() string
 }
 
-func ConvertImage(filename string) error {
+func ConvertImage(filename string, extFrom ImageConverter, extTo ImageConverter) error {
 	file, err := os.Open(filename)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "file open error: %v\n", err)
 		return err
 	}
 	defer file.Close()
-	img, err := png.Decode(file)
+	img, err := extFrom.Decode(file)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "decode error: %v\n", err)
 		return err
 	}
-	newImage, err := os.Create(FullBasename(filename) + ".jpeg")
+	newImage, err := os.Create(FullBasename(filename) + "." + extTo.Ext())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "file create error: %v\n", err)
 		return err
 	}
-	return jpeg.Encode(newImage, img, nil)
+	return extTo.Encode(newImage, img)
+}
+
+func (p PngWrapper) Encode(writer io.Writer, image image.Image) error {
+	return png.Encode(writer, image)
+}
+
+func (p PngWrapper) Decode(reader io.Reader) (image.Image, error) {
+	return png.Decode(reader)
+}
+
+func (p PngWrapper) Ext() string {
+	return string(p)
+}
+
+func (j JpegWrapper) Encode(writer io.Writer, image image.Image) error {
+	return jpeg.Encode(writer, image, nil)
+}
+
+func (j JpegWrapper) Decode(reader io.Reader) (image.Image, error) {
+	return jpeg.Decode(reader)
+}
+
+func (j JpegWrapper) Ext() string {
+	return string(j)
 }
