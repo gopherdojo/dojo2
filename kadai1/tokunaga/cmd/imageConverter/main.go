@@ -48,20 +48,9 @@ func delegateFileOperation(path string, info os.FileInfo, err error) error {
 		return err
 	}
 	if !info.IsDir() && filepath.Ext(path) == "."+extFrom {
-		tokunaga.ConvertImage(path, adaptExt(extFrom), adaptExt(extTo))
+		tokunaga.ConvertImage(path, tokunaga.AdaptExt(extFrom), tokunaga.AdaptExt(extTo))
 	}
 	return nil
-}
-
-// 引数の文字列の拡張子を表すラッパークラスを返す
-func adaptExt(ext string) tokunaga.ImageConverter {
-	if ext == "jpeg" || ext == "jpg" {
-		return tokunaga.JpegWrapper(ext)
-	}
-	if ext == "png" {
-		return tokunaga.PngWrapper(ext)
-	}
-	return tokunaga.PngWrapper(ext)
 }
 
 // 引数の拡張子が許可されているものならばtrue, それ以外なら false を返す

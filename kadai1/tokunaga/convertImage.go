@@ -19,6 +19,17 @@ type ImageConverter interface {
 	Ext() string
 }
 
+// 引数の文字列の拡張子を表すラッパークラスを返す
+func AdaptExt(ext string) ImageConverter {
+	if ext == "jpeg" || ext == "jpg" {
+		return JpegWrapper(ext)
+	}
+	if ext == "png" {
+		return PngWrapper(ext)
+	}
+	return PngWrapper(ext)
+}
+
 // filenameで指定されたファイルを extFrom から extFrom に変換する 例) png -> jepg
 func ConvertImage(filename string, extFrom ImageConverter, extTo ImageConverter) error {
 	file, err := os.Open(filename)
