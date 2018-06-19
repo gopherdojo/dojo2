@@ -12,12 +12,14 @@ import (
 type PngWrapper string
 type JpegWrapper string
 
+// ファイルのデコード, エンコード, 拡張子文字列返却用インターフェース
 type ImageConverter interface {
 	Decode(reader io.Reader) (image.Image, error)
 	Encode(writer io.Writer, image image.Image) error
 	Ext() string
 }
 
+// filenameで指定されたファイルを extFrom から extFrom に変換する 例) png -> jepg
 func ConvertImage(filename string, extFrom ImageConverter, extTo ImageConverter) error {
 	file, err := os.Open(filename)
 	if err != nil {
