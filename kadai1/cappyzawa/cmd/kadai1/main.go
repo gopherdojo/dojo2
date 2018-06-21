@@ -3,9 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/gopherdojo/dojo2/kadai1/cappyzawa"
 	"io"
 	"os"
+
+	"github.com/gopherdojo/dojo2/kadai1/cappyzawa"
 )
 
 // CLI - struct having stream fields

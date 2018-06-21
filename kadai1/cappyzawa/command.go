@@ -34,7 +34,7 @@ func (c *command) Run(dir, from, to string) ([]string, error) {
 	var createdFiles []string
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if filepath.Ext(path) == fExt {
-			if err := c.convert(path, to); err !=nil {
+			if err := c.convert(path, to); err != nil {
 				return err
 			}
 			createdFiles = append(createdFiles, path)
