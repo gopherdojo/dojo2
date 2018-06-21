@@ -1,16 +1,16 @@
 package imgconverter
 
 import (
-	"image"
-	"image/jpeg"
-	"os"
-	"io"
 	"flag"
 	"fmt"
+	"image"
+	"image/gif"
+	"image/jpeg"
+	"image/png"
+	"io"
+	"os"
 	"path/filepath"
 	"strings"
-	"image/png"
-	"image/gif"
 )
 
 type CLI struct {
@@ -20,13 +20,13 @@ type CLI struct {
 // ステータスの終了コード
 //  ExitCodeOK: 正常終了
 //  ExitCodeNG: 正常終了
-const(
+const (
 	ExitCodeOK = iota // 0
-	ExitCodeNG	      // 1
+	ExitCodeNG        // 1
 )
 
 // Runでメインの処理を記述する
-func (c* CLI) Run(args []string) int {
+func (c *CLI) Run(args []string) int {
 	flags := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	flags.SetOutput(c.ErrStream)
 
@@ -112,7 +112,7 @@ func checkUnacceptableFormat(format string) bool {
 //
 //  output: error                 -> エラーの場合の情報、正常終了の場合 nil
 func ConvertImage(src string, sourceFormat string, targetFormat string) error {
-	file, err := os.Open(src);
+	file, err := os.Open(src)
 	if err != nil {
 		return err
 	}
@@ -146,4 +146,3 @@ func ConvertImage(src string, sourceFormat string, targetFormat string) error {
 
 	return nil
 }
-

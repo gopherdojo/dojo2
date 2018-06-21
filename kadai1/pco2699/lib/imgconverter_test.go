@@ -1,13 +1,13 @@
 package imgconverter
 
 import (
-	"testing"
-	"strings"
-	"os"
-	"io"
-	"strconv"
 	"bytes"
+	"io"
 	"io/ioutil"
+	"os"
+	"strconv"
+	"strings"
+	"testing"
 )
 
 // assert用の関数を定義(ステータス確認用)
@@ -18,7 +18,7 @@ func assertStatus(t *testing.T, status int, expected int) {
 }
 
 // assert用の関数を定義(ファイル存在確認用)
-func assertFile(t *testing.T, path string, expectedFilename string){
+func assertFile(t *testing.T, path string, expectedFilename string) {
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		t.Fatal(err)
@@ -33,14 +33,14 @@ func assertFile(t *testing.T, path string, expectedFilename string){
 }
 
 // assert用の関数を定義(ブーリアン確認用)
-func assertBool(t *testing.T, output bool, expected bool){
+func assertBool(t *testing.T, output bool, expected bool) {
 	if output != expected {
 		t.Errorf("Output expected %q to eq %q", output, expected)
 	}
 }
 
 // テスト用にファイルをコピーする関数
-func copyFile(srcName string, dstName string){
+func copyFile(srcName string, dstName string) {
 	src, err := os.Open(srcName)
 	if err != nil {
 		panic(err)
@@ -54,7 +54,7 @@ func copyFile(srcName string, dstName string){
 	defer dst.Close()
 
 	_, err = io.Copy(dst, src)
-	if  err != nil {
+	if err != nil {
 		panic(err)
 	}
 }
@@ -83,11 +83,11 @@ func TestCliFromJpgToPngWith10pictures(t *testing.T) {
 	cli := &CLI{OutStream: outStream, ErrStream: errStream}
 	checkPath := "../testImg/jpg1/"
 
-	args := strings.Split("imgConverter -src jpg -dst png " + checkPath, " ")
+	args := strings.Split("imgConverter -src jpg -dst png "+checkPath, " ")
 
 	// ファイルをコピーする
 	for i := 1; i < 10; i++ {
-		copyFile(checkPath + strconv.Itoa(i) + ".jpg", checkPath + strconv.Itoa(i + 1) + ".jpg" )
+		copyFile(checkPath+strconv.Itoa(i)+".jpg", checkPath+strconv.Itoa(i+1)+".jpg")
 	}
 
 	// cliを実行、ステータスを確認
@@ -125,11 +125,11 @@ func TestCliFromJpgToPngWith10picturesWithNoFlag(t *testing.T) {
 	cli := &CLI{OutStream: outStream, ErrStream: errStream}
 	checkPath := "../testImg/jpg1/"
 
-	args := strings.Split("imgConverter " + checkPath, " ")
+	args := strings.Split("imgConverter "+checkPath, " ")
 
 	// ファイルをコピーする
 	for i := 1; i < 10; i++ {
-		copyFile(checkPath + strconv.Itoa(i) + ".jpg", checkPath + strconv.Itoa(i + 1) + ".jpg" )
+		copyFile(checkPath+strconv.Itoa(i)+".jpg", checkPath+strconv.Itoa(i+1)+".jpg")
 	}
 
 	// cliを実行、ステータスを確認
@@ -166,11 +166,11 @@ func TestCliFromPngToGifWith10pictures(t *testing.T) {
 	cli := &CLI{OutStream: outStream, ErrStream: errStream}
 	checkPath := "../testImg/png1/"
 
-	args := strings.Split("imgConverter -src png -dst gif " + checkPath, " ")
+	args := strings.Split("imgConverter -src png -dst gif "+checkPath, " ")
 
 	// ファイルをコピーする
 	for i := 1; i < 10; i++ {
-		copyFile(checkPath + strconv.Itoa(i) + ".png", checkPath + strconv.Itoa(i + 1) + ".png" )
+		copyFile(checkPath+strconv.Itoa(i)+".png", checkPath+strconv.Itoa(i+1)+".png")
 	}
 
 	// cliを実行、ステータスを確認
@@ -207,11 +207,11 @@ func TestCliFromPngToGifWith10picture(t *testing.T) {
 	cli := &CLI{OutStream: outStream, ErrStream: errStream}
 	checkPath := "../testImg/png1/"
 
-	args := strings.Split("imgConverter -src png -dst gif " + checkPath, " ")
+	args := strings.Split("imgConverter -src png -dst gif "+checkPath, " ")
 
 	// ファイルをコピーする
 	for i := 1; i < 10; i++ {
-		copyFile(checkPath + strconv.Itoa(i) + ".png", checkPath + strconv.Itoa(i + 1) + ".png" )
+		copyFile(checkPath+strconv.Itoa(i)+".png", checkPath+strconv.Itoa(i+1)+".png")
 	}
 
 	// cliを実行、ステータスを確認
@@ -258,7 +258,7 @@ func TestCliErrorFileWith1pictures(t *testing.T) {
 	cli := &CLI{OutStream: outStream, ErrStream: errStream}
 	checkPath := "../testImg/error1/"
 
-	args := strings.Split("imgConverter -src jpg -dst png " + checkPath, " ")
+	args := strings.Split("imgConverter -src jpg -dst png "+checkPath, " ")
 
 	// cliを実行、ステータスを確認
 	assertStatus(t, cli.Run(args), ExitCodeNG)

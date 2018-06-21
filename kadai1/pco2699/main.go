@@ -1,8 +1,8 @@
 package main
 
 import (
-	"os"
 	"dojo2/kadai1/pco2699/lib"
+	"os"
 )
 
 //
