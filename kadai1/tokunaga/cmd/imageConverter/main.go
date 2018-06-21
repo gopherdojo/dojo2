@@ -3,9 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/gopherdojo/dojo2/kadai1/tokunaga"
 	"os"
 	"path/filepath"
+
+	"github.com/gopherdojo/dojo2/kadai1/tokunaga"
 )
 
 type Usage string
