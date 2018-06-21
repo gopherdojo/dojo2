@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 // Command - interface defining a method for command
@@ -27,9 +26,6 @@ func NewCommand(decoder, encoder Converter) Command {
 
 // Run - execute command
 func (c *command) Run(dir, from, to string) ([]string, error) {
-	if _, err := os.Stat(dir); err != nil {
-		return nil, err
-	}
 	fExt := fmt.Sprintf(".%s", from)
 	var createdFiles []string
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -73,10 +69,7 @@ func (c *command) convert(path, to string) error {
 
 func (c *command) createOutputFile(path, to string) (*os.File, error) {
 	tExt := fmt.Sprintf(".%s", to)
-	baseDir := filepath.Dir(path)
-	baseFile := filepath.Base(path)
 	baseExt := filepath.Ext(path)
-	newFileName := strings.Replace(baseFile, baseExt, tExt, 1)
-	newFilePath := filepath.Join(baseDir, newFileName)
-	return os.Create(newFilePath)
+	newFile := path[:len(path)-len(baseExt)] + tExt
+	return os.Create(newFile)
 }
