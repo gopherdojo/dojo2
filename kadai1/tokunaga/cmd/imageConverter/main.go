@@ -20,11 +20,11 @@ var permmitedExts []string = []string{"png", "jpeg", "jpg"}
 func init() {
 	flag.StringVar(&extFrom, "from", "jpeg", string(usage))
 	flag.StringVar(&extTo, "to", "png", string(usage))
-	flag.Parse()
 }
 
 // メイン関数
 func main() {
+	flag.Parse()
 	if len(flag.Args()) != 1 {
 		fmt.Fprintln(os.Stderr, "Usage: "+string(usage))
 		os.Exit(1)
