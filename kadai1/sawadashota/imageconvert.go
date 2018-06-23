@@ -13,15 +13,8 @@ type Image struct {
 	Src image.Image
 }
 
-// Converter to images: jpeg, png and gif
-type Converter interface {
-	ToJpeg(dest string) error
-	ToPng(dest string) error
-	ToGif(dest string) error
-}
-
 // New Converter interface
-func New(path string) (Converter, error) {
+func New(path string) (*Image, error) {
 	file, err := os.Open(path)
 
 	if err != nil {

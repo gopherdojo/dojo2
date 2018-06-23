@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"path"
 	"regexp"
+
+	"io"
+	"path/filepath"
 
 	"github.com/gopherdojo/dojo2/kadai1/sawadashota"
 )
@@ -17,6 +18,16 @@ const (
 	Gif  = "gif"
 )
 
+var (
+	errorWriter      io.Writer
+	newFilenameRegex *regexp.Regexp
+)
+
+func init() {
+	errorWriter = os.Stderr
+	newFilenameRegex = regexp.MustCompile(`\.\w+$`)
+}
+
 func main() {
 	from := flag.String("f", "jpg", "Image type from: png, jpg or gif")
 	to := flag.String("t", "png", "Image type to: png, jpg or gif")
@@ -26,115 +37,95 @@ func main() {
 		exitWithError("Please designation target directory")
 	}
 
-	r := regexImageExtension(*from)
+	r, err := regexImageExtension(*from)
+
+	if err != nil {
+		exitWithError(err.Error())
+	}
 
 	for _, target := range flag.Args() {
 
-		if _, err := os.Stat(target); err != nil {
+		err := filepath.Walk(target, func(path string, info os.FileInfo, err error) error {
+			switch {
+			case err != nil:
+				return err
+			case r.MatchString(filepath.Ext(path)):
+				i, err := sawadashota.New(path)
+
+				if err != nil {
+					return err
+				}
+
+				if err := convert(i, newFilename(path, *to), *to); err != nil {
+					return err
+				}
+
+			default:
+				return nil
+			}
+
+			if r.MatchString(filepath.Ext(path)) {
+
+			}
+			return nil
+		})
+
+		if err != nil {
 			exitWithError(err.Error())
 		}
-
-		imagePaths := targetImages(target, r)
-		convertAllImages(&imagePaths, *to)
 	}
 }
 
 // exitWithError print error message and exit error status
 func exitWithError(message string) {
-	fmt.Println(message)
+	fmt.Fprintln(errorWriter, message)
 	os.Exit(1)
 }
 
-func targetImages(dir string, r *regexp.Regexp) []string {
-	pwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		panic(err)
-	}
-
-	var paths []string
-	for _, file := range files {
-		rel := path.Join(dir, file.Name())
-
-		if r.MatchString(file.Name()) {
-			paths = append(paths, path.Join(pwd, rel))
-			continue
-		}
-
-		if file.IsDir() {
-			paths = append(paths, targetImages(rel, r)...)
-		}
-	}
-
-	return paths
-}
-
-func regexImageExtension(convertFrom string) *regexp.Regexp {
+func regexImageExtension(convertFrom string) (*regexp.Regexp, error) {
 	var r *regexp.Regexp
+	var err error
+
 	switch convertFrom {
 	case Png:
-		r = regexp.MustCompile(`\.png`)
+		r, err = regexp.Compile(`\.png`)
 	case Jpeg:
-		r = regexp.MustCompile(`\.jpe?g`)
+		r, err = regexp.Compile(`\.jpe?g`)
 	case Gif:
-		r = regexp.MustCompile(`\.gif`)
+		r, err = regexp.Compile(`\.gif`)
 	default:
 		exitWithError(fmt.Sprintf("Image type should be %s, %s or %s", Png, Jpeg, Gif))
 	}
 
-	return r
+	return r, err
 }
 
-func convertAllImages(imagePaths *[]string, convertTo string) {
-	c := convert(convertTo)
+func convert(i *sawadashota.Image, dest string, convertTo string) error {
+	var err error
 
-	for _, imagePath := range *imagePaths {
-		i, err := sawadashota.New(imagePath)
-
-		if err != nil {
-			exitWithError(err.Error())
-		}
-
-		c(i, newFilename(imagePath, convertTo))
-	}
-}
-
-func convert(convertTo string) func(i sawadashota.Converter, dest string) {
-	var f func(i sawadashota.Converter, dest string)
 	switch convertTo {
 	case Png:
-		f = func(i sawadashota.Converter, dest string) {
-			i.ToPng(dest)
-		}
+		err = i.ToPng(dest)
 	case Jpeg:
-		f = func(i sawadashota.Converter, dest string) {
-			i.ToJpeg(dest)
-		}
+		err = i.ToJpeg(dest)
 	case Gif:
-		f = func(i sawadashota.Converter, dest string) {
-			i.ToGif(dest)
-		}
+		err = i.ToGif(dest)
 	default:
-		exitWithError(fmt.Sprintf("Image type should be %s, %s or %s", Png, Jpeg, Gif))
+		err = fmt.Errorf("image type should be %s, %s or %s", Png, Jpeg, Gif)
 	}
 
-	return f
+	return err
 }
 
 func newFilename(imagePath, convertTo string) string {
 	var filename string
-	r := regexp.MustCompile(`\.\w+$`)
 	switch convertTo {
 	case Png:
-		filename = r.ReplaceAllString(imagePath, fmt.Sprintf(".%s", Png))
+		filename = newFilenameRegex.ReplaceAllString(imagePath, fmt.Sprintf(".%s", Png))
 	case Jpeg:
-		filename = r.ReplaceAllString(imagePath, fmt.Sprintf(".%s", Jpeg))
+		filename = newFilenameRegex.ReplaceAllString(imagePath, fmt.Sprintf(".%s", Jpeg))
 	case Gif:
-		filename = r.ReplaceAllString(imagePath, fmt.Sprintf(".%s", Gif))
+		filename = newFilenameRegex.ReplaceAllString(imagePath, fmt.Sprintf(".%s", Gif))
 	default:
 		exitWithError(fmt.Sprintf("Image type should be %s, %s or %s", Png, Jpeg, Gif))
 	}

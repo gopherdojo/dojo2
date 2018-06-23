@@ -8,11 +8,16 @@ import (
 )
 
 func TestImageToPng(t *testing.T) {
-	dir, _ := os.Getwd()
-	imgPath := path.Join(dir, "test-data/gopher.jpg")
+	dir, err := os.Getwd()
+
+	if err != nil {
+		t.Fatalf("%s", err)
+	}
+
+	imgPath := path.Join(dir, "testdata/gopher.jpg")
 
 	if _, err := os.Stat(imgPath); err != nil {
-		t.Errorf("%s", err)
+		t.Fatalf("%s", err)
 	}
 
 	i, err := New(imgPath)
@@ -21,7 +26,7 @@ func TestImageToPng(t *testing.T) {
 		t.Errorf("%s", err)
 	}
 
-	dest := path.Join(dir, "test-data/test.jpg")
+	dest := path.Join(dir, "testdata/test.jpg")
 
 	i.ToPng(dest)
 
@@ -46,15 +51,22 @@ func TestImageToPng(t *testing.T) {
 		t.Errorf("expect png but %s", format)
 	}
 
-	os.Remove(dest)
+	if os.Remove(dest) != nil {
+		t.Fatalf("%s", err)
+	}
 }
 
 func TestImageToJpeg(t *testing.T) {
-	dir, _ := os.Getwd()
-	imgPath := path.Join(dir, "test-data/gopher.png")
+	dir, err := os.Getwd()
+
+	if err != nil {
+		t.Fatalf("%s", err)
+	}
+
+	imgPath := path.Join(dir, "testdata/gopher.png")
 
 	if _, err := os.Stat(imgPath); err != nil {
-		t.Errorf("%s", err)
+		t.Fatalf("%s", err)
 	}
 
 	i, err := New(imgPath)
@@ -63,7 +75,7 @@ func TestImageToJpeg(t *testing.T) {
 		t.Errorf("%s", err)
 	}
 
-	dest := path.Join(dir, "test-data/test.jpg")
+	dest := path.Join(dir, "testdata/test.jpg")
 
 	i.ToJpeg(dest)
 
@@ -88,12 +100,19 @@ func TestImageToJpeg(t *testing.T) {
 		t.Errorf("expect jpeg but %s", format)
 	}
 
-	os.Remove(dest)
+	if os.Remove(dest) != nil {
+		t.Fatalf("%s", err)
+	}
 }
 
 func TestImageToGif(t *testing.T) {
-	dir, _ := os.Getwd()
-	imgPath := path.Join(dir, "test-data/gopher.png")
+	dir, err := os.Getwd()
+
+	if err != nil {
+		t.Fatalf("%s", err)
+	}
+
+	imgPath := path.Join(dir, "testdata/gopher.png")
 
 	if _, err := os.Stat(imgPath); err != nil {
 		t.Errorf("%s", err)
@@ -105,7 +124,7 @@ func TestImageToGif(t *testing.T) {
 		t.Errorf("%s", err)
 	}
 
-	dest := path.Join(dir, "test-data/test.gif")
+	dest := path.Join(dir, "testdata/test.gif")
 
 	i.ToGif(dest)
 
@@ -130,5 +149,7 @@ func TestImageToGif(t *testing.T) {
 		t.Errorf("expect jpeg but %s", format)
 	}
 
-	os.Remove(dest)
+	if os.Remove(dest) != nil {
+		t.Fatalf("%s", err)
+	}
 }
