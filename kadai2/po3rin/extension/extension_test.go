@@ -1,11 +1,12 @@
 package extension_test
 
 import (
-	"dojo2/kadai1/po3rin/extension"
+	"dojo2/kadai2/po3rin/extension"
+	"strconv"
 	"testing"
 )
 
-func TestConvert(t *testing.T) {
+func TestArg_Convert(t *testing.T) {
 	testarg := []extension.Arg{
 		{
 			From: "jpg",
@@ -16,7 +17,7 @@ func TestConvert(t *testing.T) {
 			To:   "gif",
 			Path: "../images/gopher.jpg",
 		}, {
-			From: "png",
+			From: "pndg",
 			To:   "jpg",
 			Path: "../images/gopher.png",
 		}, {
@@ -24,7 +25,7 @@ func TestConvert(t *testing.T) {
 			To:   "gif",
 			Path: "../images/gopher.png",
 		}, {
-			From: "gif",
+			From: "gidf",
 			To:   "jpg",
 			Path: "../images/gopher.gif",
 		}, {
@@ -33,10 +34,16 @@ func TestConvert(t *testing.T) {
 			Path: "../images/gopher.gif",
 		},
 	}
-	for _, v := range testarg {
-		err := v.Convert()
-		if err != nil {
-			t.Fatalf("failed test %#v", err)
-		}
+	for i, v := range testarg {
+		t.Run("test"+strconv.Itoa(i), func(t *testing.T) {
+			helperConvert(v, t)
+		})
+	}
+}
+
+func helperConvert(v extension.Arg, t *testing.T) {
+	t.Helper()
+	if err := v.Convert(); err != nil {
+		t.Errorf("failed test %#v", err)
 	}
 }

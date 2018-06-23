@@ -2,6 +2,7 @@
 package extension
 
 import (
+	"fmt"
 	"image"
 	"image/gif"
 	"image/jpeg"
@@ -19,18 +20,24 @@ type Arg struct {
 
 // Convert create & convert extension of images. png jpg jpeg gif are only supported.
 func (a Arg) Convert() error {
-	extention := a.To
+	if a.From != "jpg" && a.From != "png" && a.From != "gif" {
+		return fmt.Errorf("%s is not supported", a.From)
+	}
+	if a.To != "jpg" && a.To != "png" && a.To != "gif" {
+		return fmt.Errorf("%s is not supported", a.To)
+	}
+
 	file, err := os.Open(a.Path)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
-
 	img, _, err := image.Decode(file)
 	if err != nil {
 		return err
 	}
 
+	extention := a.To
 	output := strings.Replace(a.Path, a.From, "", 1)
 	dstfile, err := os.Create(output + extention)
 	if err != nil {

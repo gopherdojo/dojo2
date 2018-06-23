@@ -4,6 +4,7 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GODOC=$(GOCMD) doc
+COVERAGEFILE=coverage.out
 BINARY_NAME=chext
 BINARY_UNIX=$(BINARY_NAME)_unix
 
@@ -11,17 +12,16 @@ all: test build
 build:
 	$(GOBUILD) -o $(BINARY_NAME)
 test:
-	$(GOTEST) dojo2/kadai1/po3rin/extension
+	$(GOTEST) -v ./extension/
+coverage:
+	$(GOTEST) -coverprofile=$(COVERAGEFILE) ./extension/
 doc:
-	$(GODOC) dojo2/kadai1/po3rin/extension
+	$(GODOC) ./extension
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
 	rm -f $(BINARY_UNIX)
-	rm -f images/gopher.png
-	rm -f images/sub/gopher-sub.png
-	rm -f images/gopher.gif
-	rm -f images/sub/gopher-sub.gif
+	rm -f $(COVERAGEFILE)
 build-linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v
 docker-build:

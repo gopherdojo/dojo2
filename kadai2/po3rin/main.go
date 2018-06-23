@@ -1,7 +1,7 @@
 package main
 
 import (
-	"dojo2/kadai1/po3rin/extension"
+	"dojo2/kadai2/po3rin/extension"
 	"flag"
 	"log"
 	"os"
