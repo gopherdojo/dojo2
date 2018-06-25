@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/gopherdojo/dojo2/kadai1/cappyzawa"
+	"github.com/gopherdojo/dojo2/kadai2/cappyzawa"
 )
 
 // CLI - struct having stream fields
