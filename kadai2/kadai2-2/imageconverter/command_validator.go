@@ -4,7 +4,7 @@ package imageconverter
 type CommandValidator struct{}
 
 // ExtValidate 対象フォーマットならばtrue
-func (cv *CommandValidator) ExtValidate(f Format) bool {
+func (CommandValidator) ExtValidate(f Format) bool {
 	if f == Format("jpg") || f == Format("png") {
 		return true
 	}

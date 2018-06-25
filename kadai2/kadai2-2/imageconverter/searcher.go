@@ -1,7 +1,9 @@
 package imageconverter
 
 import (
+	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
@@ -15,7 +17,11 @@ func (s *Searcher) Run(target FileInfo) []FileInfo {
 
 func (s *Searcher) recursiveSearch(target FileInfo) []FileInfo {
 	var fis []FileInfo
-	files, _ := ioutil.ReadDir(string(target.Path))
+	files, err := ioutil.ReadDir(string(target.Path))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "ファイルが開けません")
+		return fis
+	}
 	for _, file := range files {
 		filePath := FilePath(filepath.Join(string(target.Path), file.Name()))
 		fi := FileInfo{Path: filePath}

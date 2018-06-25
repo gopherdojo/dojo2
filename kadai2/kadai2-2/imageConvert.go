@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"os"
 
-	"github.com/gopherdojo/dojo2/kadai1/imageconverter"
+	"github.com/gopherdojo/dojo2/kadai2/kadai2-2/imageconverter"
 )
 
 var (
@@ -14,7 +16,8 @@ var (
 func main() {
 	flag.Parse()
 	if len(flag.Args()) == 0 {
-		panic("対象パスが指定されていません")
+		fmt.Fprintf(os.Stderr, "対象パスが指定されていません")
+		return
 	}
 	targetPath := imageconverter.FilePath(flag.Args()[0])
 
@@ -23,7 +26,8 @@ func main() {
 
 	var icCommandValidator imageconverter.CommandValidator
 	if (!icCommandValidator.ExtValidate(inputFormat)) || (!icCommandValidator.ExtValidate(outputFormat)) {
-		panic("画像ファイルフォーマットが対応していません")
+		fmt.Fprintf(os.Stderr, "画像ファイルフォーマットが対応していません")
+		return
 	}
 
 	var icFacade imageconverter.Facade
