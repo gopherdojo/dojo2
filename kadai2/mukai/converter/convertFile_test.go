@@ -1,6 +1,17 @@
 package converter
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
+
+type FileInfoMock struct {
+	os.FileInfo
+}
+
+func (f *FileInfoMock) Name() string {
+	return "aiueo"
+}
 
 func Test_convertFile_ext(t *testing.T) {
 	type fields struct {
@@ -76,9 +87,9 @@ func Test_convertFile_isSameExt(t *testing.T) {
 		args   args
 		want   bool
 	}{
-		{name:"", fields:fields{absPath: "dir/file.png"}, args:args{ext: "png"}, want: true},
-		{name:"", fields:fields{absPath: "dir/file.png"}, args:args{ext: "gif"}, want: false},
-		{name:"", fields:fields{absPath: ""}, args:args{ext: "gif"}, want: false},
+		{name: "", fields: fields{absPath: "dir/file.png"}, args: args{ext: "png"}, want: true},
+		{name: "", fields: fields{absPath: "dir/file.png"}, args: args{ext: "gif"}, want: false},
+		{name: "", fields: fields{absPath: ""}, args: args{ext: "gif"}, want: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -2,37 +2,42 @@
 package converter
 
 import (
-	"io/ioutil"
-	"path/filepath"
-	"os"
-	"image"
-	"io"
-	"strings"
-	"image/png"
-	"image/jpeg"
-	"image/gif"
 	"fmt"
+	"image"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 // convert image files from inputFormat to outputFormat in specific directory recursively.
 // inputFormat and outputFormat is available only jpeg(jpg), gif, or png.
-func Convert(dir string, inputFormat string, outputFormat string) (error) {
+func RecursiveConvert(dir string, inputFormat string, outputFormat string) error {
 	if !isAvailableFormat(inputFormat) || !isAvailableFormat(outputFormat) {
 		return fmt.Errorf(
 			"available formats are jpg(jpeg), png, gif ONLY. input parameter is %s, outpur parameter is %s",
 			inputFormat, outputFormat)
 	}
-	infos, _ := ioutil.ReadDir(dir)
+	infos, _ := files(dir)
 	for _, file := range infos {
 		inputConvertFile := convertFile{absPath: filepath.Join(dir, file.Name()), isDir: file.IsDir()}
 		if file.IsDir() {
-			Convert(inputConvertFile.absPath, inputFormat, outputFormat)
+			RecursiveConvert(inputConvertFile.absPath, inputFormat, outputFormat)
 		} else if inputConvertFile.isSameExt(inputFormat) {
 			outPath := inputConvertFile.arbitraryExtAbsPath(outputFormat)
 			internalConvert(inputConvertFile.absPath, outPath, outputFormat)
 		}
 	}
 	return nil
+}
+
+func files(dir string) ([]os.FileInfo, error) {
+	println(dir)
+	infos, e := ioutil.ReadDir(dir)
+	if e != nil {
+		return infos, e
+	}
+	return infos, nil
 }
 
 func internalConvert(inputFile string, outputFile string, outputFormat string) {
@@ -47,7 +52,9 @@ func internalConvert(inputFile string, outputFile string, outputFormat string) {
 	if err != nil {
 		println(err)
 	}
-	encode(outputFormat, out, decode)
+	if encoder := GetEncoder(outputFormat); encoder != nil {
+		encoder.Encode(out, decode)
+	}
 }
 
 func isAvailableFormat(format string) bool {
@@ -60,13 +67,4 @@ func isAvailableFormat(format string) bool {
 	}
 }
 
-func encode(format string, w io.Writer, m image.Image) {
-	switch strings.ToLower(format) {
-	case "png":
-		png.Encode(w, m)
-	case "jpg", "jpeg":
-		jpeg.Encode(w, m, &jpeg.Options{Quality:100})
-	case "gif":
-		gif.Encode(w, m, nil)
-	}
-}
+

@@ -1,11 +1,12 @@
 package main
 
 import (
-	"os"
-	"path/filepath"
 	"./converter"
 	"flag"
 	"fmt"
+	"log"
+	"os"
+	"path/filepath"
 )
 
 //aiueo
@@ -18,14 +19,14 @@ func main() {
 	dir := flag.Arg(0)
 	if len(*i) == 0 || len(*o) == 0 || len(dir) == 0 {
 		fmt.Println(usage())
-		return
+		os.Exit(1)
 	}
-	if err := converter.Convert(filepath.Join(abs, dir), *i, *o); err != nil {
-		println(err.Error())
+	if err := converter.RecursiveConvert(filepath.Join(abs, dir), *i, *o); err != nil {
+		log.Fatalln(err)
 	}
 
 }
 
-func usage() (string){
+func usage() string {
 	return "usage: imgconv -i jpg -o png dir"
 }
