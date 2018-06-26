@@ -20,13 +20,12 @@ func RecursiveConvert(dir string, inputFormat string, outputFormat string, pathe
 		return err
 	}
 	for _, file := range infos {
-		//inputConvertFile := convertFile{absPath: filepath.Join(dir, file.Name()), isDir: file.IsDir()}
-		if file.isDir {
-			RecursiveConvert(file.absPath, inputFormat, outputFormat, pather)
-		} else if file.isSameExt(inputFormat) {
+		if file.IsDir() {
+			RecursiveConvert(file.AbsPath(), inputFormat, outputFormat, pather)
+		} else if IsSameExt(file.AbsPath(), inputFormat) {
 			err := file.Convert(outputFormat)
 			if err != nil {
-				fmt.Fprintln(os.Stderr, "failed to convert " + file.absPath)
+				fmt.Fprintln(os.Stderr, "failed to convert " + file.AbsPath())
 			}
 		}
 	}

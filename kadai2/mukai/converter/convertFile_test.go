@@ -1,17 +1,8 @@
 package converter
 
 import (
-	"os"
 	"testing"
 )
-
-type FileInfoMock struct {
-	os.FileInfo
-}
-
-func (f *FileInfoMock) Name() string {
-	return "aiueo"
-}
 
 func Test_convertFile_ext(t *testing.T) {
 	type fields struct {

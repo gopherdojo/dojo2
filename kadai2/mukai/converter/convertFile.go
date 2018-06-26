@@ -8,7 +8,9 @@ import (
 )
 
 type Converter interface {
-	Convert(inputFile string, outputFormat string) error
+	Convert(outputFormat string) error
+	AbsPath() string
+	IsDir() bool
 }
 
 //拡張子名操作の便利機能をもつ, ファイルパスを表現する型.
@@ -17,14 +19,14 @@ type convertFile struct {
 	isDir   bool
 }
 
-//拡張子の取得(.なし)
-func (f convertFile) ext() string {
-	list := strings.Split(filepath.Ext(f.absPath), ".")
-	if 2 <= len(list) && !f.isDir {
-		return list[len(list)-1]
-	}
-	return ""
+func (f convertFile) AbsPath() string {
+	return f.absPath
 }
+
+func (f convertFile) IsDir() bool {
+	return f.isDir
+}
+
 
 //任意の拡張子に変換したパスを取得.
 func (f convertFile) arbitraryExtAbsPath(ext string) string {
@@ -37,14 +39,6 @@ func (f convertFile) arbitraryExtAbsPath(ext string) string {
 		return f.absPath
 	}
 	return filepath.Join(dir, split[0]) + "." + ext
-}
-
-//拡張子が同じか判定.
-func (f convertFile) isSameExt(ext string) bool {
-	if f.isDir {
-		return false
-	}
-	return strings.ToLower(f.ext()) == strings.ToLower(ext)
 }
 
 func (f convertFile) Convert(outputFormat string) error {
