@@ -1,7 +1,6 @@
 package imageconverter_test
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -11,7 +10,6 @@ import (
 func TestRun(t *testing.T) {
 	var searcher imageconverter.Searcher
 	result := searcher.Run(imageconverter.FileInfo{Path: imageconverter.FilePath("../sample_dir1")})
-	fmt.Println(result)
 	expected := []imageconverter.FileInfo{
 		imageconverter.FileInfo{Path: imageconverter.FilePath("../sample_dir1/Octocat.jpeg")},
 		imageconverter.FileInfo{Path: imageconverter.FilePath("../sample_dir1/dummy_fuga.md")},

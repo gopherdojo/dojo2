@@ -2,7 +2,6 @@ package imageconverter
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -12,24 +11,16 @@ type Searcher struct{}
 
 // Run 対象ディレクトリを再帰的に走査
 func (s *Searcher) Run(target FileInfo) []FileInfo {
-	return s.recursiveSearch(target)
-}
-
-func (s *Searcher) recursiveSearch(target FileInfo) []FileInfo {
 	var fis []FileInfo
-	files, err := ioutil.ReadDir(string(target.Path))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "ファイルが開けません")
-		return fis
-	}
-	for _, file := range files {
-		filePath := FilePath(filepath.Join(string(target.Path), file.Name()))
-		fi := FileInfo{Path: filePath}
-		if file.IsDir() {
-			fis = append(fis, s.recursiveSearch(fi)...)
-		} else {
-			fis = append(fis, fi)
+	err := filepath.Walk(string(target.Path), func(path string, info os.FileInfo, err error) error {
+		if !info.IsDir() {
+			fis = append(fis, FileInfo{Path: FilePath(path)})
 		}
+		return nil
+	})
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "ディレクトリ検索の途中でエラーが発生しました")
+		return fis
 	}
 	return fis
 }
