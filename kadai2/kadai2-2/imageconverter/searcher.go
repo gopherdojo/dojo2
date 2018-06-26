@@ -10,7 +10,7 @@ import (
 type Searcher struct{}
 
 // Run 対象ディレクトリを再帰的に走査
-func (s *Searcher) Run(target FileInfo) []FileInfo {
+func (Searcher) Run(target FileInfo) []FileInfo {
 	var fis []FileInfo
 	err := filepath.Walk(string(target.Path), func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
