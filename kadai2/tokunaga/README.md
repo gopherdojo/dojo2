@@ -1,20 +1,17 @@
-# build
-```
-go build -o imageconv cmd/imageConverter/main.go
-```
+課題2
 
-# Usage
-```
-./imageconv [-from=jpeg|jpg|png] [-to=jpeg|jpg|png] directory
-```
-
-|オプション|詳細        |必須 |備考|
-|--------|------------|-----|--|
-|from    |変換元の拡張子|  -  |jpeg, jpg, pngのどれか(デフォルトはjpeg)|
-|to      |変換後の拡張子|  -  |jpeg, jpg, pngのどれか(デフォルトはpng)|
+## io.Readerとio.Writer
+---
+io.Readerとio.Writerについて調べてみよう
+標準パッケージでどのように使われているか
+io.Readerとio.Writerがあることで
+どういう利点があるのか具体例を挙げて考えてみる
 
 
-# 課題説明
-`path/filepath` の `Walk` を使用し、画像変換用の関数を再帰的に実行。  
-変換前と変換後の拡張子を変更しても画像変換用の関数をそのまま使用できるように画像変換を行うための  
-ineterfaceを作成。
+## テストを書いてみよう
+---
+- 1回目の宿題のテストを作ってみて下さい
+- テストのしやすさを考えてリファクタリングしてみる
+- テストのカバレッジを取ってみる
+- テーブル駆動テストを行う
+- テストヘルパーを作ってみる
