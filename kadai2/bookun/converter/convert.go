@@ -1,23 +1,23 @@
 package converter
 
 import (
-	"image"
-	"image/jpeg"
-	"image/png"
 	"os"
-	"path/filepath"
+
+	"github.com/gopherdojo/dojo2/kadai2/bookun/format"
 )
 
 // Converter - ファイル名を持つ構造体
 type Converter struct {
 	srcFileName, dstFileName string
+	Format                   format.Format
 }
 
 //NewConverter - srcFileの名前とdstFileの名前を受け取りConverterを生成
-func NewConverter(srcFileName, dstFileName string) *Converter {
+func NewConverter(srcFileName, dstFileName string, format format.Format) *Converter {
 	c := Converter{}
 	c.srcFileName = srcFileName
 	c.dstFileName = dstFileName
+	c.Format = format
 	return &c
 }
 
@@ -28,7 +28,7 @@ func (c *Converter) Convert() error {
 		return err
 	}
 	defer srcFile.Close()
-	img, _, err := image.Decode(srcFile)
+	img, err := c.Format.Decoder.Decode(srcFile)
 	if err != nil {
 		return err
 	}
@@ -36,11 +36,7 @@ func (c *Converter) Convert() error {
 	if err != nil {
 		return err
 	}
-	switch filepath.Ext(c.dstFileName) {
-	case ".jpg", ".jpeg":
-		err = jpeg.Encode(dstFile, img, nil)
-	case ".png":
-		err = png.Encode(dstFile, img)
-	}
+	defer dstFile.Close()
+	err = c.Format.Encoder.Encode(dstFile, img)
 	return err
 }

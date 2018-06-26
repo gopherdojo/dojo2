@@ -1,0 +1,20 @@
+mode: set
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:33.38,42.46 7 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:46.2,46.23 1 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:51.2,52.16 2 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:59.2,61.16 3 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:68.2,68.32 1 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:77.2,77.19 1 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:42.46,44.3 1 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:46.23,49.3 2 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:52.16,54.3 1 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:61.16,64.3 2 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:68.32,71.45 3 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:74.3,74.71 1 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:71.45,73.4 1 0
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:80.81,82.91 2 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:88.2,88.25 1 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:82.91,83.41 1 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:86.3,86.13 1 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:83.41,85.4 1 1
+github.com/gopherdojo/dojo2/kadai2/bookun/cli.go:91.13,94.2 2 0

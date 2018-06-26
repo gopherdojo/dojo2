@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/gopherdojo/dojo2/kadai2/bookun/converter"
+	"github.com/gopherdojo/dojo2/kadai2/bookun/format"
 )
 
 const (
@@ -15,6 +16,8 @@ const (
 	ExitCodeOK = iota
 	// ExitCodeParseFlagError - コマンドラインオプションのパースのエラー
 	ExitCodeParseFlagError
+	// ExitCodeCreateFormat - Format型の作成失敗時のエラー
+	ExitCodeCreateFormat
 	// ExitCodeSearchError - ディレクトリ内探索のエラー
 	ExitCodeSearchError
 	// ExitCodeConvertError - 変換失敗時のエラー
@@ -45,9 +48,9 @@ func (c *CLI) Run(args []string) int {
 		return ExitCodeParseFlagError
 	}
 
-	if !c.isSupport(srcFormat, dstFormat) {
-		fmt.Fprintf(c.errStream, "convert-cli can support only jpg, jpeg or png\n")
-		return ExitCodeParseFlagError
+	format, err := format.NewFormat(srcFormat, dstFormat)
+	if err != nil {
+		return ExitCodeCreateFormat
 	}
 
 	// ----
@@ -64,7 +67,7 @@ func (c *CLI) Run(args []string) int {
 	// 1ファイル毎に処理
 	for _, v := range targetFiles {
 		dstFileName := v[:len(v)-len(filepath.Ext(v))] + "." + dstFormat
-		converter := converter.NewConverter(v, dstFileName)
+		converter := converter.NewConverter(v, dstFileName, *format)
 		if err := converter.Convert(); err != nil {
 			return ExitCodeConvertError
 		}
@@ -74,30 +77,13 @@ func (c *CLI) Run(args []string) int {
 	return ExitCodeOK
 }
 
-func (c *CLI) isSupport(srcFormat, dstFormat string) bool {
-	supportedFormats := []string{"jpeg", "jpg", "png"}
-	var srcFormatFlag bool
-	var dstFormatFlag bool
-	for _, v := range supportedFormats {
-		if v == srcFormat && v == dstFormat {
-			srcFormatFlag = true
-			dstFormatFlag = true
-		} else if v == srcFormat {
-			srcFormatFlag = true
-		} else if v == dstFormat {
-			dstFormatFlag = true
-		}
-	}
-	return srcFormatFlag && dstFormatFlag
-}
-
 func (c *CLI) searchFiles(targetDirName, targetFormat string) ([]string, error) {
 	var targetFiles []string
 	err := filepath.Walk(targetDirName, func(path string, info os.FileInfo, err error) error {
 		if filepath.Ext(path) == targetFormat {
 			targetFiles = append(targetFiles, path)
 		}
-		return nil
+		return err
 	})
 	return targetFiles, err
 }
