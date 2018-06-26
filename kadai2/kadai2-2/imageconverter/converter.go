@@ -9,6 +9,10 @@ import (
 	"regexp"
 )
 
+type ConverterInterface interface {
+	Run(f FileInfo, in, out Format)
+}
+
 // Converter 画像ファイル変換器
 type Converter struct{}
 

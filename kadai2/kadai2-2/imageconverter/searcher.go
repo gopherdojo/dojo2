@@ -6,6 +6,10 @@ import (
 	"path/filepath"
 )
 
+type SearcherInterface interface {
+	Run(target FileInfo) []FileInfo
+}
+
 // Searcher 対象ディレクトリファイルの検索器
 type Searcher struct{}
 

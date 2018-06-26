@@ -30,6 +30,8 @@ func main() {
 		return
 	}
 
-	var icFacade imageconverter.Facade
+	var searcher imageconverter.Searcher
+	var converter imageconverter.Converter
+	icFacade := imageconverter.Facade{Searcher: searcher, Converter: converter}
 	icFacade.Run(targetPath, inputFormat, outputFormat)
 }
