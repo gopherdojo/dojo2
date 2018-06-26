@@ -15,25 +15,20 @@ func TestFormat_Ext(t *testing.T) {
 	}
 }
 
+var cases_Format_NormalizedFormat = []struct {
+	format   imageconverter.Format
+	expected imageconverter.Format
+}{
+	{imageconverter.Format("jpeg"), imageconverter.Format("jpg")},
+	{imageconverter.Format("jpg"), imageconverter.Format("jpg")},
+	{imageconverter.Format("png"), imageconverter.Format("png")},
+}
+
 func TestFormat_NormalizedFormat(t *testing.T) {
-	fJpeg := imageconverter.Format("jpeg")
-	resultJpeg := fJpeg.NormalizedFormat()
-	expectedJpeg := imageconverter.Format("jpg")
-	if resultJpeg != expectedJpeg {
-		t.Errorf("NormalizedFormat failed.  expect:%s, actual:%s", expectedJpeg, resultJpeg)
-	}
-
-	fJpg := imageconverter.Format("jpg")
-	resultJpg := fJpg.NormalizedFormat()
-	expectedJpg := imageconverter.Format("jpg")
-	if resultJpg != expectedJpg {
-		t.Errorf("NormalizedFormat failed.  expect:%s, actual:%s", expectedJpeg, resultJpeg)
-	}
-
-	fPng := imageconverter.Format("png")
-	resultPng := fPng.NormalizedFormat()
-	expectedPng := imageconverter.Format("png")
-	if resultPng != expectedPng {
-		t.Errorf("NormalizedFormat failed.  expect:%s, actual:%s", expectedPng, resultPng)
+	for _, c := range cases_Format_NormalizedFormat {
+		result := c.format.NormalizedFormat()
+		if result != c.expected {
+			t.Errorf("NormalizedFormat failed.  expect:%s, actual:%s", c.expected, result)
+		}
 	}
 }
