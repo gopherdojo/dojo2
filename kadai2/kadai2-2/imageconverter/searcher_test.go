@@ -7,7 +7,7 @@ import (
 	"github.com/gopherdojo/dojo2/kadai2/kadai2-2/imageconverter"
 )
 
-func TestSearcherRun(t *testing.T) {
+func TestSearcher_Run(t *testing.T) {
 	var searcher imageconverter.Searcher
 	result := searcher.Run(imageconverter.FileInfo{Path: imageconverter.FilePath("../sample_dir1")})
 	expected := []imageconverter.FileInfo{

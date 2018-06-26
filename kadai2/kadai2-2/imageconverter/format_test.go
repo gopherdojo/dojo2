@@ -6,7 +6,7 @@ import (
 	"github.com/gopherdojo/dojo2/kadai2/kadai2-2/imageconverter"
 )
 
-func TestFormatExt(t *testing.T) {
+func TestFormat_Ext(t *testing.T) {
 	f := imageconverter.Format("hoge")
 	result := f.Ext()
 	expected := ".hoge"
@@ -15,7 +15,7 @@ func TestFormatExt(t *testing.T) {
 	}
 }
 
-func TestNormalizedFormat(t *testing.T) {
+func TestFormat_NormalizedFormat(t *testing.T) {
 	fJpeg := imageconverter.Format("jpeg")
 	resultJpeg := fJpeg.NormalizedFormat()
 	expectedJpeg := imageconverter.Format("jpg")

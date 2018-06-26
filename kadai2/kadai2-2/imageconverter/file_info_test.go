@@ -6,7 +6,7 @@ import (
 	"github.com/gopherdojo/dojo2/kadai2/kadai2-2/imageconverter"
 )
 
-func TestFileInfoExt(t *testing.T) {
+func TestFileInfo_Ext(t *testing.T) {
 	fi := imageconverter.FileInfo{Path: imageconverter.FilePath("/path/to/hoge.txt")}
 	result := fi.Ext()
 	expected := ".txt"
@@ -15,7 +15,7 @@ func TestFileInfoExt(t *testing.T) {
 	}
 }
 
-func TestFormat(t *testing.T) {
+func TestFileInfo_Format(t *testing.T) {
 	fi := imageconverter.FileInfo{Path: imageconverter.FilePath("/path/to/hoge.txt")}
 	result := fi.Format()
 	expected := imageconverter.Format("txt")

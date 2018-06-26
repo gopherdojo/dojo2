@@ -8,7 +8,7 @@ import (
 	"github.com/gopherdojo/dojo2/kadai2/kadai2-2/imageconverter"
 )
 
-func TestConverterRun(t *testing.T) {
+func TestConverter_Run(t *testing.T) {
 	var c imageconverter.Converter
 	fi := imageconverter.FileInfo{Path: imageconverter.FilePath("../sample_dir1/Octocat.jpeg")}
 	c.Run(fi, imageconverter.Format("jpg"), imageconverter.Format("png"))

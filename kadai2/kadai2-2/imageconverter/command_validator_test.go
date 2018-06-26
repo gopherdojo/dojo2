@@ -6,7 +6,7 @@ import (
 	"github.com/gopherdojo/dojo2/kadai2/kadai2-2/imageconverter"
 )
 
-func TestExtValidate(t *testing.T) {
+func TestCommandValidator_ExtValidate(t *testing.T) {
 	var cv imageconverter.CommandValidator
 	result := cv.ExtValidate(imageconverter.Format("hoge"))
 	expected := false
