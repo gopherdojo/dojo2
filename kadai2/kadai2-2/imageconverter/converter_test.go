@@ -1,7 +1,6 @@
 package imageconverter_test
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -9,16 +8,65 @@ import (
 )
 
 func TestConverter_Run(t *testing.T) {
+	t.Run("jpg to png", func(t *testing.T) {
+		testConverter_Run(t,
+			imageconverter.FilePath("../sample_dir1/Octocat.jpeg"),
+			imageconverter.Format("jpg"),
+			imageconverter.Format("png"),
+			imageconverter.FilePath("../sample_dir1/Octocat.png"),
+			true,
+		)
+		testConverter_Run(t,
+			imageconverter.FilePath("../sample_dir1/dummy_fuga.md"),
+			imageconverter.Format("jpg"),
+			imageconverter.Format("png"),
+			imageconverter.FilePath("../sample_dir1/dummy_fuga.png"),
+			false,
+		)
+		testConverter_Run(t,
+			imageconverter.FilePath("../sample_dir1/sample_dir2/Octocat.jpg"),
+			imageconverter.Format("jpg"),
+			imageconverter.Format("png"),
+			imageconverter.FilePath("../sample_dir1/sample_dir2/Octocat.png"),
+			true,
+		)
+	})
+	t.Run("png to jpg", func(t *testing.T) {
+		testConverter_Run(t,
+			imageconverter.FilePath("../sample_dir1/sample_dir2/sample_dir3/Octocat.png"),
+			imageconverter.Format("png"),
+			imageconverter.Format("jpg"),
+			imageconverter.FilePath("../sample_dir1/sample_dir2/sample_dir3/Octocat.jpg"),
+			true,
+		)
+		testConverter_Run(t,
+			imageconverter.FilePath("../sample_dir1/dummy_fuga.md"),
+			imageconverter.Format("png"),
+			imageconverter.Format("jpg"),
+			imageconverter.FilePath("../sample_dir1/dummy_fuga.jpg"),
+			false,
+		)
+	})
+}
+
+func testConverter_Run(t *testing.T,
+	inFP imageconverter.FilePath,
+	inF imageconverter.Format,
+	outF imageconverter.Format,
+	expectedOutFP imageconverter.FilePath,
+	expectedGenerated bool,
+) {
+	t.Helper()
 	var c imageconverter.Converter
-	fi := imageconverter.FileInfo{Path: imageconverter.FilePath("../sample_dir1/Octocat.jpeg")}
-	c.Run(fi, imageconverter.Format("jpg"), imageconverter.Format("png"))
-	generatedFilePath := imageconverter.FilePath("../sample_dir1/Octocat.png")
-	result := fileExists(generatedFilePath)
-	expected := true
-	if result != expected {
+	fi := imageconverter.FileInfo{Path: inFP}
+	c.Run(fi, inF, outF)
+	result := fileExists(expectedOutFP)
+	if result != expectedGenerated {
 		t.Errorf("Converter.Run failed.")
 	}
-	fileClear(generatedFilePath)
+	if result {
+		fileClear(expectedOutFP)
+	}
 }
 
 func fileExists(path imageconverter.FilePath) bool {
@@ -27,7 +75,5 @@ func fileExists(path imageconverter.FilePath) bool {
 }
 
 func fileClear(path imageconverter.FilePath) {
-	if err := os.Remove(string(path)); err != nil {
-		fmt.Println(err)
-	}
+	os.Remove(string(path))
 }
