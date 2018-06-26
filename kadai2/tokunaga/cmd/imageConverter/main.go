@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gopherdojo/dojo2/kadai1/tokunaga"
+	"github.com/gopherdojo/dojo2/kadai2/tokunaga"
 )
 
 type Usage string

@@ -12,15 +12,22 @@ import (
 type PngWrapper string
 type JpegWrapper string
 
-// ファイルのデコード, エンコード, 拡張子文字列返却用インターフェース
-type ImageConverter interface {
+type Decoder interface {
 	Decode(reader io.Reader) (image.Image, error)
+}
+type Encoder interface {
 	Encode(writer io.Writer, image image.Image) error
+}
+
+// ファイルのデコード, エンコード, 拡張子文字列返却用インターフェース
+type DecodeEncoder interface {
+	Decoder
+	Encoder
 	Ext() string
 }
 
 // 引数の文字列の拡張子を表すラッパークラスを返す
-func AdaptExt(ext string) ImageConverter {
+func AdaptExt(ext string) DecodeEncoder {
 	if ext == "jpeg" || ext == "jpg" {
 		return JpegWrapper(ext)
 	}
@@ -31,7 +38,7 @@ func AdaptExt(ext string) ImageConverter {
 }
 
 // filenameで指定されたファイルを extFrom から extFrom に変換する 例) png -> jepg
-func ConvertImage(filename string, extFrom ImageConverter, extTo ImageConverter) error {
+func ConvertImage(filename string, extFrom DecodeEncoder, extTo DecodeEncoder) error {
 	file, err := os.Open(filename)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "file open error: %v\n", err)
