@@ -18,14 +18,20 @@ func RecursiveConvert(dir string, inputFormat string, outputFormat string) error
 			"available formats are jpg(jpeg), png, gif ONLY. input parameter is %s, outpur parameter is %s",
 			inputFormat, outputFormat)
 	}
-	infos, _ := files(dir)
+	infos, err := files(dir)
+	if err != nil {
+		return err
+	}
 	for _, file := range infos {
 		inputConvertFile := convertFile{absPath: filepath.Join(dir, file.Name()), isDir: file.IsDir()}
 		if file.IsDir() {
 			RecursiveConvert(inputConvertFile.absPath, inputFormat, outputFormat)
 		} else if inputConvertFile.isSameExt(inputFormat) {
 			outPath := inputConvertFile.arbitraryExtAbsPath(outputFormat)
-			internalConvert(inputConvertFile.absPath, outPath, outputFormat)
+			err := internalConvert(inputConvertFile.absPath, outPath, outputFormat)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "failed to convert " + inputConvertFile.absPath)
+			}
 		}
 	}
 	return nil
@@ -40,21 +46,25 @@ func files(dir string) ([]os.FileInfo, error) {
 	return infos, nil
 }
 
-func internalConvert(inputFile string, outputFile string, outputFormat string) {
-	out, _ := os.Create(outputFile)
+func internalConvert(inputFile string, outputFile string, outputFormat string) error {
+	out, err := os.Create(outputFile)
+	if err != nil {
+		return err
+	}
 	defer out.Close()
 	input, err := os.Open(inputFile)
 	defer input.Close()
 	if err != nil {
-		println(err)
+		return err
 	}
 	decode, _, err := image.Decode(input)
 	if err != nil {
-		println(err)
+		return err
 	}
 	if encoder := GetEncoder(outputFormat); encoder != nil {
-		encoder.Encode(out, decode)
+		return encoder.Encode(out, decode)
 	}
+	return nil
 }
 
 func isAvailableFormat(format string) bool {
