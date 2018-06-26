@@ -3,7 +3,13 @@ package converter
 import (
 	"path/filepath"
 	"strings"
+	"os"
+	"image"
 )
+
+type Converter interface {
+	Convert(inputFile string, outputFormat string) error
+}
 
 //拡張子名操作の便利機能をもつ, ファイルパスを表現する型.
 type convertFile struct {
@@ -39,4 +45,26 @@ func (f convertFile) isSameExt(ext string) bool {
 		return false
 	}
 	return strings.ToLower(f.ext()) == strings.ToLower(ext)
+}
+
+func (f convertFile) Convert(outputFormat string) error {
+	outputFile := f.arbitraryExtAbsPath(outputFormat)
+	out, err := os.Create(outputFile)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	input, err := os.Open(f.absPath)
+	defer input.Close()
+	if err != nil {
+		return err
+	}
+	decode, _, err := image.Decode(input)
+	if err != nil {
+		return err
+	}
+	if encoder := GetEncoder(outputFormat); encoder != nil {
+		return encoder.Encode(out, decode)
+	}
+	return nil
 }

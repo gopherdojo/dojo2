@@ -32,7 +32,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	if err := converter.RecursiveConvert(filepath.Join(abs, dir), i, o); err != nil {
+	if err := converter.RecursiveConvert(filepath.Join(abs, dir), i, o, converter.Path{}); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
