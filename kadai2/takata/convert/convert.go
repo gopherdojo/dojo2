@@ -22,12 +22,12 @@ import (
 func Convert(dir string, srcFmt string, dstFmt string) error {
 
 	if !isFileOrDirExists(dir) {
-		return errors.New("ディレトリは存在しません")
+		return errors.New("ディレクトリは存在しません")
 	}
 
 	fInfo, error := os.Stat(dir)
 	if error != nil {
-		return error
+		return errors.Wrapf(error, "os.Stat() with %s", dir)
 	}
 
 	if !fInfo.IsDir() {
@@ -51,7 +51,7 @@ func dirwalk(dir string, srcFmt string, dstFmt string) ([]FileInformation, error
 
 	files, error := ioutil.ReadDir(dir)
 	if error != nil {
-		return nil, error
+		return nil, errors.Wrapf(error, "ioutil.ReadDir() with %s", dir)
 	}
 
 	var paths []FileInformation
@@ -84,7 +84,7 @@ func convertImage(src FileInformation) error {
 	}
 
 	if !isAvailableFormat(src.dstFmt) {
-		return errors.New("指定した変換元の画像形式は無効です")
+		return errors.New("指定した変換先の画像形式は無効です")
 	}
 
 	if error := startConvert(src); error != nil {
@@ -96,13 +96,14 @@ func convertImage(src FileInformation) error {
 // Encode the targer image
 func startConvert(src FileInformation) error {
 
-	file, error := os.Open(src.name + "." + src.srcFmt)
+	fileName := src.name + "." + src.srcFmt
+	file, error := os.Open(fileName)
 	if error != nil {
-		return error
+		return errors.Wrapf(error, "os.Open() with %s", fileName)
 	}
 	defer file.Close()
 
-	img, _, error := decode(file)
+	img, _, error := image.Decode(file)
 	if error != nil {
 		return error
 	}
@@ -114,7 +115,7 @@ func startConvert(src FileInformation) error {
 
 	out, error := os.Create(dstFile)
 	if error != nil {
-		return error
+		return errors.Wrapf(error, "os.Create() with %s", dstFile)
 	}
 	defer out.Close()
 
@@ -124,28 +125,23 @@ func startConvert(src FileInformation) error {
 	return nil
 }
 
-// decode file
-func decode(file *os.File) (image.Image, string, error) {
-	return image.Decode(file)
-}
-
 // encode image to dstFormat
 func encode(format string, out *os.File, img image.Image) error {
 
 	switch format {
 	case "jpeg", "jpg":
 		if error := jpeg.Encode(out, img, nil); error != nil {
-			return error
+			return errors.Wrapf(error, "jpeg.Encode() with %s", format)
 		}
 		return nil
 	case "gif":
 		if error := gif.Encode(out, img, nil); error != nil {
-			return error
+			return errors.Wrapf(error, "gif.Encode() with %s", format)
 		}
 		return nil
 	case "png":
 		if error := png.Encode(out, img); error != nil {
-			return error
+			return errors.Wrapf(error, "png.Encode() with %s", format)
 		}
 		return nil
 	default:
@@ -157,9 +153,7 @@ func encode(format string, out *os.File, img image.Image) error {
 func makeDstFile(src FileInformation) (string, error) {
 	dstDir := "output"
 	if _, err := os.Stat(dstDir); os.IsNotExist(err) {
-		if error := os.Mkdir(dstDir, 0777); error != nil {
-			return "", error
-		}
+		os.Mkdir(dstDir, 0777)
 	}
 	return filepath.Join(dstDir, fmt.Sprintf("%s.%s", getFileNameWithoutExt(src.name), src.dstFmt)), nil
 }
@@ -183,8 +177,11 @@ func getFileNameWithoutExt(path string) string {
 
 // Check if file exists
 func isFileOrDirExists(filename string) bool {
-	_, err := os.Stat(filename)
-	return os.IsNotExist(err)
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		return false
+	}
+	return true
+
 }
 
 // FileInformation contains Name and srcFmt and dstFmt.
