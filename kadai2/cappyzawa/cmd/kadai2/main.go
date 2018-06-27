@@ -6,6 +6,8 @@ import (
 	"io"
 	"os"
 
+	"image/jpeg"
+
 	"github.com/gopherdojo/dojo2/kadai2/cappyzawa"
 )
 
@@ -14,51 +16,54 @@ type CLI struct {
 	OutStream, ErrStream io.Writer
 }
 
+const (
+	ExitCodeOK = iota
+	ExitCodeParseFlagError
+	ExitCodeInvalidFormat
+	ExitCodeFailedRun
+)
+
 // Execute - execute conversion
 func (c *CLI) Execute(args []string) int {
 	var f, t string
-	flags := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	flags := flag.NewFlagSet(args[0], flag.ContinueOnError)
 	flags.SetOutput(c.ErrStream)
 	flags.StringVar(&f, "f", "jpeg", "enable to select format before conversion")
 	flags.StringVar(&t, "t", "png", "enable to select format after conversion")
 
-	flags.Parse(args[1:])
+	if err := flags.Parse(args[1:]); err != nil {
+		return ExitCodeParseFlagError
+	}
 
 	if len(flags.Args()) == 0 {
-		fmt.Fprintf(c.ErrStream, "Usage: %s [-n] dir_path...\n", os.Args[0])
-		return 1
-	}
-	dir := flags.Arg(0)
-
-	var decoder conv.Converter
-	if f == "jpeg" {
-		decoder = new(conv.Jpeg)
-	} else if f == "png" {
-		decoder = new(conv.Png)
-	} else {
-		fmt.Fprint(c.ErrStream, "invalid format\n")
-		return 1
+		fmt.Fprintf(c.ErrStream, "Usage: %s [-n] dir_path...\n", args[0])
+		return ExitCodeParseFlagError
 	}
 
-	var encoder conv.Converter
+	dirIndex := 0
+	dir := flags.Arg(dirIndex)
+
+	decoder := conv.NewDecoder()
+	var encoder conv.Encoder
 	if t == "jpeg" {
-		encoder = new(conv.Jpeg)
+		encoder = &conv.Jpeg{Options: &jpeg.Options{Quality: jpeg.DefaultQuality}}
 	} else if t == "png" {
-		encoder = new(conv.Png)
+		encoder = &conv.Png{}
 	} else {
 		fmt.Fprint(c.ErrStream, "invalid format\n")
-		return 1
+		return ExitCodeInvalidFormat
 	}
 	command := conv.NewCommand(decoder, encoder)
+
 	files, err := command.Run(dir, f, t)
 	if err != nil {
 		fmt.Fprintf(c.ErrStream, "%s\n", err.Error())
-		return 1
+		return ExitCodeFailedRun
 	}
 	for _, file := range files {
 		fmt.Fprintf(c.OutStream, "created file: %s\n", file)
 	}
-	return 0
+	return ExitCodeOK
 }
 
 func main() {

@@ -6,26 +6,23 @@ import (
 	"path/filepath"
 )
 
-// Command - interface defining a method for command
-type Command interface {
-	Run(dir, from, to string) ([]string, error)
+type Command struct {
+	decoder Decoder
+	encoder Encoder
 }
 
-type command struct {
-	decoder Converter
-	encoder Converter
-}
-
-// NewCommand - initialize Command
-func NewCommand(decoder, encoder Converter) Command {
-	return &command{
+func NewCommand(decoder Decoder, encoder Encoder) *Command {
+	return &Command{
 		decoder: decoder,
 		encoder: encoder,
 	}
 }
 
-// Run - execute command
-func (c *command) Run(dir, from, to string) ([]string, error) {
+// Run - execute Command
+func (c *Command) Run(dir, from, to string) ([]string, error) {
+	if _, err := os.Stat(dir); err != nil {
+		return nil, err
+	}
 	fExt := fmt.Sprintf(".%s", from)
 	var createdFiles []string
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -44,13 +41,13 @@ func (c *command) Run(dir, from, to string) ([]string, error) {
 	return createdFiles, nil
 }
 
-func (c *command) convert(path, to string) error {
+func (c *Command) convert(path, to string) error {
 	file, err := os.Open(path)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
-	img, err := c.decoder.Decode(file)
+	img, _, err := c.decoder.Decode(file)
 	if err != nil {
 		return err
 	}
@@ -67,7 +64,7 @@ func (c *command) convert(path, to string) error {
 	return nil
 }
 
-func (c *command) createOutputFile(path, to string) (*os.File, error) {
+func (c *Command) createOutputFile(path, to string) (*os.File, error) {
 	tExt := fmt.Sprintf(".%s", to)
 	baseExt := filepath.Ext(path)
 	newFile := path[:len(path)-len(baseExt)] + tExt
