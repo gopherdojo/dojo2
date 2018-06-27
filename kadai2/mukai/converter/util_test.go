@@ -17,8 +17,8 @@ func TestExt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Ext(tt.args.path); got != tt.want {
-				t.Errorf("Ext() = %v, want %v", got, tt.want)
+			if got := extension(tt.args.path); got != tt.want {
+				t.Errorf("ext() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -40,8 +40,8 @@ func TestIsSameExt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := IsSameExt(tt.args.path, tt.args.ext); got != tt.want {
-				t.Errorf("IsSameExt() = %v, want %v", got, tt.want)
+			if got := isSameExt(tt.args.path, tt.args.ext); got != tt.want {
+				t.Errorf("isSameExt() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -64,8 +64,8 @@ func TestArbitraryExtAbsPath(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ArbitraryExtAbsPath(tt.args.filePath, tt.args.ext); got != tt.want {
-				t.Errorf("ArbitraryExtAbsPath() = %v, want %v", got, tt.want)
+			if got := arbitraryExtAbsPath(tt.args.filePath, tt.args.ext); got != tt.want {
+				t.Errorf("arbitraryExtAbsPath() = %v, want %v", got, tt.want)
 			}
 		})
 	}

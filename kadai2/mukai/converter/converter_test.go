@@ -38,7 +38,7 @@ type testConvertFile struct {
 }
 
 func (f testConvertFile) convert(outputFormat string) (string, error) {
-	path := ArbitraryExtAbsPath(f.absPath, outputFormat)
+	path := arbitraryExtAbsPath(f.absPath, outputFormat)
 	return path, nil
 }
 
@@ -55,7 +55,7 @@ func TestRecursiveConvert(t *testing.T) {
 		dir          string
 		inputFormat  string
 		outputFormat string
-		pather       Pather
+		pather       pather
 	}
 	expected := []string {
 		"images/file1.png",

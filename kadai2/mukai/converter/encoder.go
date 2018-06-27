@@ -9,11 +9,11 @@ import (
 	"image/png"
 )
 
-type Encoder interface {
+type encoder interface {
 	Encode(io.Writer, image.Image) error
 }
 
-func GetEncoder(format string) Encoder {
+func getEncoder(format string) encoder {
 	switch strings.ToLower(format) {
 	case "png":
 		return pngEncoder{}
@@ -27,7 +27,7 @@ func GetEncoder(format string) Encoder {
 }
 
 type jpegEncoder struct {
-	Encoder
+	encoder
 }
 
 func (e jpegEncoder) Encode(writer io.Writer, image image.Image) error {
@@ -35,7 +35,7 @@ func (e jpegEncoder) Encode(writer io.Writer, image image.Image) error {
 }
 
 type gifEncoder struct {
-	Encoder
+	encoder
 }
 
 func (e gifEncoder) Encode(writer io.Writer, image image.Image) error {
@@ -43,7 +43,7 @@ func (e gifEncoder) Encode(writer io.Writer, image image.Image) error {
 }
 
 type pngEncoder struct {
-	Encoder
+	encoder
 }
 
 func (e pngEncoder) Encode(writer io.Writer, image image.Image) error {

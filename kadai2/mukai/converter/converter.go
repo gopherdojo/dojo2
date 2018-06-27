@@ -9,7 +9,7 @@ import (
 
 // convert image files from inputFormat to outputFormat in specific directory recursively.
 // inputFormat and outputFormat is available only jpeg(jpg), gif, or png.
-func RecursiveConvert(dir string, inputFormat string, outputFormat string, pather Pather) ([]string, error) {
+func RecursiveConvert(dir string, inputFormat string, outputFormat string, pather pather) ([]string, error) {
 	if !isAvailableFormat(inputFormat) || !isAvailableFormat(outputFormat) {
 		return nil, fmt.Errorf(
 			"available formats are jpg(jpeg), png, gif ONLY. input parameter is %s, outpur parameter is %s",
@@ -28,7 +28,7 @@ func RecursiveConvert(dir string, inputFormat string, outputFormat string, pathe
 				continue
 			}
 			convertedFiles = append(convertedFiles, c...)
-		} else if IsSameExt(file.absolutePath(), inputFormat) {
+		} else if isSameExt(file.absolutePath(), inputFormat) {
 			outputFile, err := file.convert(outputFormat)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, "failed to convert " + file.absolutePath())

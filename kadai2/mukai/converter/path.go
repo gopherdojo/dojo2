@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 )
 
-type Pather interface {
+type pather interface {
 	files(dir string) ([]converterFileInterface, error)
 }
 

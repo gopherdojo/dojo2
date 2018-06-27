@@ -27,7 +27,7 @@ func (f converterFile) isDirectory() bool {
 }
 
 func (f converterFile) convert(outputFormat string) (string, error) {
-	outputFile := ArbitraryExtAbsPath(f.absPath, outputFormat)
+	outputFile := arbitraryExtAbsPath(f.absPath, outputFormat)
 	out, err := os.Create(outputFile)
 	if err != nil {
 		return "", err
@@ -42,7 +42,7 @@ func (f converterFile) convert(outputFormat string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if encoder := GetEncoder(outputFormat); encoder != nil {
+	if encoder := getEncoder(outputFormat); encoder != nil {
 		err = encoder.Encode(out, decode)
 		if err != nil {
 			return "", nil
