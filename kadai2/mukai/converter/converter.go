@@ -21,19 +21,19 @@ func RecursiveConvert(dir string, inputFormat string, outputFormat string, pathe
 	}
 	var convertedFiles []string
 	for _, file := range infos {
-		if file.IsDir() {
-			c, e := RecursiveConvert(file.AbsPath(), inputFormat, outputFormat, pather)
+		if file.isDirectory() {
+			c, e := RecursiveConvert(file.absolutePath(), inputFormat, outputFormat, pather)
 			if e != nil {
-				fmt.Fprintln(os.Stderr, "failed to convert " + file.AbsPath())
+				fmt.Fprintln(os.Stderr, "failed to convert " + file.absolutePath())
 				continue
 			}
 			convertedFiles = append(convertedFiles, c...)
-		} else if IsSameExt(file.AbsPath(), inputFormat) {
-			err := file.Convert(outputFormat)
+		} else if IsSameExt(file.absolutePath(), inputFormat) {
+			outputFile, err := file.convert(outputFormat)
 			if err != nil {
-				fmt.Fprintln(os.Stderr, "failed to convert " + file.AbsPath())
+				fmt.Fprintln(os.Stderr, "failed to convert " + file.absolutePath())
 			}
-			convertedFiles = append(convertedFiles, file.AbsPath())
+			convertedFiles = append(convertedFiles, outputFile)
 		}
 	}
 	return convertedFiles, nil

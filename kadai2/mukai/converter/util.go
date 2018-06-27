@@ -18,3 +18,13 @@ func Ext(path string) string {
 func IsSameExt(path string, ext string) bool {
 	return strings.ToLower(Ext(path)) == strings.ToLower(ext)
 }
+
+//任意の拡張子に変換したパスを取得.
+func ArbitraryExtAbsPath(filePath string, ext string) string {
+	dir, file := filepath.Split(filePath)
+	split := strings.Split(file, ".")
+	if len(split) < 2 {
+		return filePath
+	}
+	return filepath.Join(dir, split[0]) + "." + ext
+}

@@ -9,22 +9,22 @@ import (
 type testPath struct {
 }
 
-func (t testPath) files(dir string) ([]Converter, error) {
+func (t testPath) files(dir string) ([]converterFileInterface, error) {
 	if dir == "images" {
-		var files []Converter
+		var files []converterFileInterface
 		files = append(files, testConvertFile{absPath: "images/file1.jpg", isDir: false})
 		files = append(files, testConvertFile{absPath: "images/file2.jpg", isDir: false})
 		files = append(files, testConvertFile{absPath: "images/file1.png", isDir: false})
 		files = append(files, testConvertFile{absPath: "images/dir1", isDir: true})
 		return files, nil
 	} else if dir == "images/dir1" {
-		var files []Converter
+		var files []converterFileInterface
 		files = append(files, testConvertFile{absPath: "images/dir1/file3.jpg", isDir: false})
 		files = append(files, testConvertFile{absPath: "images/dir1/file4.jpg", isDir: false})
 		files = append(files, testConvertFile{absPath: "images/dir1/dir2", isDir: true})
 		return files, nil
 	} else if dir == "images/dir1/dir2" {
-		var files []Converter
+		var files []converterFileInterface
 		files = append(files, testConvertFile{absPath: "images/dir1/dir2/file5.jpg", isDir: false})
 		files = append(files, testConvertFile{absPath: "images/dir1/dir2/file1.gif", isDir: false})
 		return files, nil
@@ -37,16 +37,16 @@ type testConvertFile struct {
 	isDir   bool
 }
 
-func (f testConvertFile) Convert(outputFormat string) error {
-	fmt.Println("convert " + f.absPath + " to " + outputFormat)
-	return nil
+func (f testConvertFile) convert(outputFormat string) (string, error) {
+	path := ArbitraryExtAbsPath(f.absPath, outputFormat)
+	return path, nil
 }
 
-func (f testConvertFile) IsDir() bool {
+func (f testConvertFile) isDirectory() bool {
 	return f.isDir
 }
 
-func (f testConvertFile) AbsPath() string {
+func (f testConvertFile) absolutePath() string {
 	return f.absPath
 }
 
@@ -58,11 +58,11 @@ func TestRecursiveConvert(t *testing.T) {
 		pather       Pather
 	}
 	expected := []string {
-		"images/file1.jpg",
-		"images/file2.jpg",
-		"images/dir1/file3.jpg",
-		"images/dir1/file4.jpg",
-		"images/dir1/dir2/file5.jpg",
+		"images/file1.png",
+		"images/file2.png",
+		"images/dir1/file3.png",
+		"images/dir1/file4.png",
+		"images/dir1/dir2/file5.png",
 	}
 	tests := []struct {
 		name    string

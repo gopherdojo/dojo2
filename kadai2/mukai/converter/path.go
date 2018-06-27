@@ -6,20 +6,20 @@ import (
 )
 
 type Pather interface {
-	files(dir string) ([]Converter, error)
+	files(dir string) ([]converterFileInterface, error)
 }
 
 type Path struct {
 }
 
-func (path Path) files(dir string) ([]Converter, error) {
+func (path Path) files(dir string) ([]converterFileInterface, error) {
 	infos, e := ioutil.ReadDir(dir)
 	if e != nil {
 		return nil, e
 	}
-	var paths []Converter
+	var paths []converterFileInterface
 	for _, v := range infos {
-		file := convertFile{absPath: filepath.Join(dir, v.Name()), isDir: v.IsDir()}
+		file := converterFile{absPath: filepath.Join(dir, v.Name()), isDir: v.IsDir()}
 		paths = append(paths, file)
 	}
 	return paths, nil

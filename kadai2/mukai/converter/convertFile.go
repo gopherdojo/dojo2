@@ -1,64 +1,53 @@
 package converter
 
 import (
-	"path/filepath"
-	"strings"
 	"os"
 	"image"
+	"fmt"
 )
 
-type Converter interface {
-	Convert(outputFormat string) error
-	AbsPath() string
-	IsDir() bool
+type converterFileInterface interface {
+	convert(outputFormat string) (string, error)
+	absolutePath() string
+	isDirectory() bool
 }
 
 //拡張子名操作の便利機能をもつ, ファイルパスを表現する型.
-type convertFile struct {
+type converterFile struct {
 	absPath string
 	isDir   bool
 }
 
-func (f convertFile) AbsPath() string {
+func (f converterFile) absolutePath() string {
 	return f.absPath
 }
 
-func (f convertFile) IsDir() bool {
+func (f converterFile) isDirectory() bool {
 	return f.isDir
 }
 
-
-//任意の拡張子に変換したパスを取得.
-func (f convertFile) arbitraryExtAbsPath(ext string) string {
-	dir, file := filepath.Split(f.absPath)
-	if f.isDir {
-		return dir
-	}
-	split := strings.Split(file, ".")
-	if len(split) < 2 {
-		return f.absPath
-	}
-	return filepath.Join(dir, split[0]) + "." + ext
-}
-
-func (f convertFile) Convert(outputFormat string) error {
-	outputFile := f.arbitraryExtAbsPath(outputFormat)
+func (f converterFile) convert(outputFormat string) (string, error) {
+	outputFile := ArbitraryExtAbsPath(f.absPath, outputFormat)
 	out, err := os.Create(outputFile)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer out.Close()
 	input, err := os.Open(f.absPath)
 	defer input.Close()
 	if err != nil {
-		return err
+		return "", err
 	}
 	decode, _, err := image.Decode(input)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if encoder := GetEncoder(outputFormat); encoder != nil {
-		return encoder.Encode(out, decode)
+		err = encoder.Encode(out, decode)
+		if err != nil {
+			return "", nil
+		}
+		return outputFile, nil
 	}
-	return nil
+	return "", fmt.Errorf("encoder is nil")
 }
