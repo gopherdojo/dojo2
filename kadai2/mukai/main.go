@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./converter"
+	"dojo2/kadai2/mukai/converter"
 	"flag"
 	"fmt"
 	"os"
