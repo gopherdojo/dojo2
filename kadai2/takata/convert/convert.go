@@ -10,6 +10,7 @@ import (
 	"image/gif"
 	"image/jpeg"
 	"image/png"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -34,6 +35,14 @@ func Convert(dir string, srcFmt string, dstFmt string) error {
 		return errors.New("ディレクトリを指定してください")
 	}
 
+	if !isAvailableFormat(srcFmt) {
+		return errors.New("指定した変換元の画像形式は無効です")
+	}
+
+	if !isAvailableFormat(dstFmt) {
+		return errors.New("指定した変換先の画像形式は無効です")
+	}
+
 	files, error := dirwalk(dir, srcFmt, dstFmt)
 	if error != nil {
 		return error
@@ -47,14 +56,14 @@ func Convert(dir string, srcFmt string, dstFmt string) error {
 }
 
 // find files with some extension in a directory recursively
-func dirwalk(dir string, srcFmt string, dstFmt string) ([]FileInformation, error) {
+func dirwalk(dir string, srcFmt string, dstFmt string) ([]FileInfo, error) {
 
 	files, error := ioutil.ReadDir(dir)
 	if error != nil {
 		return nil, errors.Wrapf(error, "ioutil.ReadDir() with %s", dir)
 	}
 
-	var paths []FileInformation
+	var paths []FileInfo
 	for _, file := range files {
 		if file.IsDir() {
 			files, error := dirwalk(filepath.Join(dir, file.Name()), srcFmt, dstFmt)
@@ -70,31 +79,22 @@ func dirwalk(dir string, srcFmt string, dstFmt string) ([]FileInformation, error
 			continue
 		}
 
-		path := FileInformation{filepath.Join(dir, name[:pos-1]), srcFmt, dstFmt}
+		path := FileInfo{filepath.Join(dir, name[:pos-1]), srcFmt, dstFmt}
 		paths = append(paths, path)
 	}
 	return paths, nil
 }
 
 // convert file with some extension to file with other extension
-func convertImage(src FileInformation) error {
-
-	if !isAvailableFormat(src.srcFmt) {
-		return errors.New("指定した変換元の画像形式は無効です")
-	}
-
-	if !isAvailableFormat(src.dstFmt) {
-		return errors.New("指定した変換先の画像形式は無効です")
-	}
-
-	if error := startConvert(src); error != nil {
+func convertImage(src FileInfo) error {
+	if error := convert(src); error != nil {
 		return error
 	}
 	return nil
 }
 
-// Encode the targer image
-func startConvert(src FileInformation) error {
+// Convert the targer image
+func convert(src FileInfo) error {
 
 	fileName := src.name + "." + src.srcFmt
 	file, error := os.Open(fileName)
@@ -103,7 +103,7 @@ func startConvert(src FileInformation) error {
 	}
 	defer file.Close()
 
-	img, _, error := image.Decode(file)
+	img, error := decode(file)
 	if error != nil {
 		return error
 	}
@@ -126,7 +126,7 @@ func startConvert(src FileInformation) error {
 }
 
 // encode image to dstFormat
-func encode(format string, out *os.File, img image.Image) error {
+func encode(format string, out io.Writer, img image.Image) error {
 
 	switch format {
 	case "jpeg", "jpg":
@@ -149,8 +149,17 @@ func encode(format string, out *os.File, img image.Image) error {
 	}
 }
 
+// decode image
+func decode(r io.Reader) (image.Image, error) {
+	img, _, error := image.Decode(r)
+	if error != nil {
+		return nil, error
+	}
+	return img, nil
+}
+
 // make destination file
-func makeDstFile(src FileInformation) (string, error) {
+func makeDstFile(src FileInfo) (string, error) {
 	dstDir := "output"
 	if _, err := os.Stat(dstDir); os.IsNotExist(err) {
 		os.Mkdir(dstDir, 0777)
@@ -184,8 +193,8 @@ func isFileOrDirExists(filename string) bool {
 
 }
 
-// FileInformation contains Name and srcFmt and dstFmt.
-type FileInformation struct {
+// FileInfo contains Name and srcFmt and dstFmt.
+type FileInfo struct {
 	name   string // name of a file
 	srcFmt string // original format of a file
 	dstFmt string // format to convert

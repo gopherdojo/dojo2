@@ -1,6 +1,7 @@
 package convert
 
 import (
+	"fmt"
 	"image"
 	"io/ioutil"
 	"os"
@@ -9,31 +10,59 @@ import (
 	"github.com/pkg/errors"
 )
 
+type Args struct {
+	dir    string
+	srcFmt string
+	dstFmt string
+}
+
+var argsList = []Args{
+	{"../test", "jpg", "png"},
+	{"../test", "jpeg", "png"},
+	{"../test", "jpeg", "gif"},
+	{"../test2", "png", "gif"},
+	{"../test2", "png", "jpg"},
+	{"../test3", "gif", "jpg"},
+	{"../test3", "gif", "png"},
+}
+
+var failArgsList = []Args{
+	{"../test", "jpbg", "png"},
+	{"../test", "jpg", "pdf"},
+	{"../test2", "pag", "jpg"},
+	{"../test3", "gof", "jpg"},
+	{"../test2", "png", "gof"},
+	{"../test4", "png", "jpg"},
+}
+
 func TestConvert(t *testing.T) {
-	t.Run("jpg to png", func(t *testing.T) {
-		err := Convert("../test", "jpg", "png")
-		if err != nil {
-			t.Error(err)
-		}
-	})
-	t.Run("png to jpg", func(t *testing.T) {
-		err := Convert("../test2", "png", "jpg")
-		if err != nil {
-			t.Error(err)
-		}
-	})
-	t.Run("gif to jpg", func(t *testing.T) {
-		err := Convert("../test3", "gif", "jpg")
-		if err != nil {
-			t.Error(err)
-		}
-	})
+
+	for _, arg := range argsList {
+
+		t.Run(fmt.Sprintf("convertTest %s to %s", arg.srcFmt, arg.dstFmt), func(t *testing.T) {
+			err := Convert(arg.dir, arg.srcFmt, arg.dstFmt)
+			if err != nil {
+				t.Error(err)
+			}
+			removeTestOutput("./output")
+		})
+	}
+
+	for _, arg := range failArgsList {
+
+		t.Run(fmt.Sprintf("convertFailTest %s to %s", arg.srcFmt, arg.dstFmt), func(t *testing.T) {
+			err := Convert(arg.dir, arg.srcFmt, arg.dstFmt)
+			if err == nil {
+				t.Error("Invalid Convert Result")
+			}
+			removeTestOutput("./output")
+		})
+	}
 
 	t.Run("NG isFileOrDirExists", func(t *testing.T) {
-		err := Convert("../notfound", "png", "jpg")
-		expectedError := errors.New("ディレクトリは存在しません")
-		if err.Error() != expectedError.Error() {
-			t.Error(err)
+		result := isFileOrDirExists("../notfound/1.png")
+		if result {
+			t.Error("Invalid Result")
 		}
 	})
 
@@ -45,47 +74,37 @@ func TestConvert(t *testing.T) {
 		}
 	})
 
-	t.Run("NG convertImage srcFmt", func(t *testing.T) {
-		err := convertImage(FileInformation{name: "1", srcFmt: "pdf", dstFmt: "png"})
-		expectedError := errors.New("指定した変換元の画像形式は無効です")
-		if err.Error() != expectedError.Error() {
-			t.Error(err)
-		}
-	})
-
-	t.Run("NG convertImage dstFmt", func(t *testing.T) {
-		err := convertImage(FileInformation{name: "1", srcFmt: "png", dstFmt: "pdf"})
-		expectedError := errors.New("指定した変換先の画像形式は無効です")
-		if err.Error() != expectedError.Error() {
-			t.Error(err)
-		}
-	})
-
-	t.Run("NG startConvert", func(t *testing.T) {
-		err := startConvert(FileInformation{name: "999", srcFmt: "png", dstFmt: "jpg"})
+	t.Run("NG convert", func(t *testing.T) {
+		err := convert(FileInfo{name: "999", srcFmt: "png", dstFmt: "jpg"})
 		expectedError := errors.New("os.Open() with 999.png: open 999.png: no such file or directory")
 		if err.Error() != expectedError.Error() {
 			t.Error(err)
 		}
 	})
 
-	t.Run("NG isAvailableFormat", func(t *testing.T) {
-		result := isAvailableFormat("pdf")
-		if result != false {
-			t.Error("wrong result")
-		}
-	})
-
 	t.Run("NG encode", func(t *testing.T) {
 
 		f := testTempFile(t)
-		img := testImage(t)
+		img := testTempImage(t)
 		err := encode("pdf", f, img)
 		expectedError := errors.New("不正な画像形式を出力先に指定しています")
 		if err.Error() != expectedError.Error() {
 			t.Error(err)
 		}
 	})
+
+	t.Run("NG decode", func(t *testing.T) {
+
+		f, error := os.Open("../test4/1.txt")
+		if error != nil {
+			t.Error(error)
+		}
+		_, error = decode(f)
+		if error != nil {
+			t.Error(error)
+		}
+	})
+
 }
 
 func testTempFile(t *testing.T) *os.File {
@@ -98,10 +117,10 @@ func testTempFile(t *testing.T) *os.File {
 	return tf
 }
 
-func testImage(t *testing.T) image.Image {
+func testTempImage(t *testing.T) image.Image {
 	t.Helper()
 
-	file, error := os.Open("1.jpg")
+	file, error := os.Open("../test/2.jpg")
 	if error != nil {
 		t.Error(error)
 	}
@@ -112,4 +131,8 @@ func testImage(t *testing.T) image.Image {
 		t.Error(error)
 	}
 	return img
+}
+
+func removeTestOutput(dir string) {
+	os.RemoveAll(dir)
 }
