@@ -1,22 +1,17 @@
-# kadai1
-次の仕様を満たすコマンドを作って下さい
-* ディレクトリを指定する
-* 指定したディレクトリ以下のJPGファイルをPNGに変換
-* ディレクトリ以下は再帰的に処理する
-* 変換前と変換後の画像形式を指定できる
+# kadai2
+## io.Readerとio.Writer
+### 標準パッケージでどのように使われているか
+メソッドの引数で用いられている。  
+今回の課題で使用した`image/jpeg`パッケージの[`Decode`](https://github.com/golang/go/blob/f03ee913e210e1b09bd33ed35c03ec8e4fc270be/src/image/jpeg/writer.go#L575)でも使用されている。  
 
-以下を満たすように開発してください
-* mainパッケージと分離する
-* 自作パッケージと標準パッケージと準標準パッケージのみ使う
-  * 準標準パッケージ：golang.org/x以下のパッケージ
-* ユーザ定義型を作ってみる
-* GoDocを生成してみる
+### io.Readerとio.Writerがあることでどういう利点があるのか具体例を挙げて考えてみる
+`io.Reader`が引数として指定されている場合は、`Read(p []byte) (n int, err error)`というシグネチャ、`io.Writer`が指定されている場合は、`Write(p []byte) (n int, err error)`のシグネチャにmatchさえしていればどんなものでも引数として与えることができる。  
+上記の`Decode()`の引数には`*os.File`型の変数を渡しているが、`*os.File`型は`Read(p []byte) (n int, err error)`にmatchするメソッドをもっている。  
+同様に`Encode()`の引数にも`*os.File`型の変数を渡すことができ、`*os.File`型は`Write(p []byte) (n int, err error)`にmatchするメソッドをもっている。
 
-## How to use
-```bash
-$ go build -o cmd/kadai1/main.go 
-$ ./conv -f jpeg -t png fixuters/jpeg
-```
-### option
-* `-f`: 変換前の形式を指定(default: `jpeg`)
-* `-t`: 変換後の形式を指定(default: `png`)
+今回の場合はファイルの読み書きをしたかったため、ファイルを引数として渡したが、標準入力/出力の読み書きを行い場合はそれらを引数とすることもできる。
+つまり、Interfaceとして`io.Reader`、`io.Writer`があることで、抽象的に読み書きが可能になるという利点がある。
+
+## kadai1との差分
+* foo
+* bar
