@@ -66,7 +66,8 @@ func (c *CLI) delegateFileOperation(path string, info os.FileInfo, err error) er
 		return err
 	}
 	if !info.IsDir() && filepath.Ext(path) == "."+c.from {
-		ConvertImage(path, AdaptExt(c.from), AdaptExt(c.to))
+		converter := Converter{AdaptExt(c.from), AdaptExt(c.to)}
+		converter.ConvertImage(path)
 	}
 	return nil
 }

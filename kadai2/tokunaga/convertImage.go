@@ -26,6 +26,11 @@ type DecodeEncoder interface {
 	Ext() string
 }
 
+type Converter struct {
+	ExtFrom DecodeEncoder
+	ExtTo   DecodeEncoder
+}
+
 // 引数の文字列の拡張子を表すラッパークラスを返す
 func AdaptExt(ext string) DecodeEncoder {
 	if ext == "jpeg" || ext == "jpg" {
@@ -38,24 +43,24 @@ func AdaptExt(ext string) DecodeEncoder {
 }
 
 // filenameで指定されたファイルを extFrom から extFrom に変換する 例) png -> jepg
-func ConvertImage(filename string, extFrom DecodeEncoder, extTo DecodeEncoder) error {
+func (c Converter) ConvertImage(filename string) error {
 	file, err := os.Open(filename)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "file open error: %v\n", err)
 		return err
 	}
 	defer file.Close()
-	img, err := extFrom.Decode(file)
+	img, err := c.ExtFrom.Decode(file)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "decode error: %v\n", err)
 		return err
 	}
-	newImage, err := os.Create(FullBasename(filename) + "." + extTo.Ext())
+	newImage, err := os.Create(FullBasename(filename) + "." + c.ExtTo.Ext())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "file create error: %v\n", err)
 		return err
 	}
-	return extTo.Encode(newImage, img)
+	return c.ExtTo.Encode(newImage, img)
 }
 
 func (p PngWrapper) Encode(writer io.Writer, image image.Image) error {

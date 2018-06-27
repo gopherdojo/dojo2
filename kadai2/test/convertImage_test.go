@@ -50,8 +50,8 @@ func TestConvertImage(t *testing.T) {
 	defer TearDown()
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			fromExt, toExt := tokunaga.AdaptExt(path.Ext(c.input)[1:]), tokunaga.AdaptExt(path.Ext(c.output)[1:])
-			if err := tokunaga.ConvertImage(c.input, fromExt, toExt); err != nil {
+			converter := tokunaga.Converter{ExtFrom: tokunaga.AdaptExt(path.Ext(c.input)[1:]), ExtTo: tokunaga.AdaptExt(path.Ext(c.output)[1:])}
+			if err := converter.ConvertImage(c.input); err != nil {
 				t.Errorf("%s can't convart %s", c.input, c.name)
 			}
 		})
