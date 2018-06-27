@@ -1,9 +1,9 @@
 package converter
 
 import (
-	"os"
-	"image"
 	"fmt"
+	"image"
+	"os"
 )
 
 type converterFileInterface interface {

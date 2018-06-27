@@ -57,7 +57,7 @@ func TestRecursiveConvert(t *testing.T) {
 		outputFormat string
 		pather       pather
 	}
-	expected := []string {
+	expected := []string{
 		"images/file1.png",
 		"images/file2.png",
 		"images/dir1/file3.png",
@@ -70,7 +70,7 @@ func TestRecursiveConvert(t *testing.T) {
 		want    []string
 		wantErr bool
 	}{
-		{name:"", args:args{inputFormat:"jpg", outputFormat:"png", dir:"images", pather: testPath{}}, want: expected, wantErr:false},
+		{name: "", args: args{inputFormat: "jpg", outputFormat: "png", dir: "images", pather: testPath{}}, want: expected, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

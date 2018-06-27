@@ -11,9 +11,9 @@ func TestExt(t *testing.T) {
 		args args
 		want string
 	}{
-		{name: "filename", args:args{path: "file.jpg"}, want: "jpg"},
-		{name: "filename", args:args{path: "jpg"}, want: ""},
-		{name: "filename", args:args{path: ""}, want: ""},
+		{name: "filename", args: args{path: "file.jpg"}, want: "jpg"},
+		{name: "filename", args: args{path: "jpg"}, want: ""},
+		{name: "filename", args: args{path: ""}, want: ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -36,7 +36,7 @@ func TestIsSameExt(t *testing.T) {
 	}{
 		{name: "", args: args{path: "dir/file.png", ext: "png"}, want: true},
 		{name: "", args: args{path: "dir/file.png", ext: "gif"}, want: false},
-		{name: "", args: args{path:"", ext:"png"}, want: false},
+		{name: "", args: args{path: "", ext: "png"}, want: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

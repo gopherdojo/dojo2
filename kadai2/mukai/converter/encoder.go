@@ -1,12 +1,12 @@
 package converter
 
 import (
-	"strings"
-	"io"
 	"image"
-	"image/jpeg"
 	"image/gif"
+	"image/jpeg"
 	"image/png"
+	"io"
+	"strings"
 )
 
 type encoder interface {

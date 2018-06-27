@@ -1,8 +1,8 @@
 package converter
 
 import (
-	"strings"
 	"path/filepath"
+	"strings"
 )
 
 //拡張子の取得(.なし)

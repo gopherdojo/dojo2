@@ -24,14 +24,14 @@ func RecursiveConvert(dir string, inputFormat string, outputFormat string, pathe
 		if file.isDirectory() {
 			c, e := RecursiveConvert(file.absolutePath(), inputFormat, outputFormat, pather)
 			if e != nil {
-				fmt.Fprintln(os.Stderr, "failed to convert " + file.absolutePath())
+				fmt.Fprintln(os.Stderr, "failed to convert "+file.absolutePath())
 				continue
 			}
 			convertedFiles = append(convertedFiles, c...)
 		} else if isSameExt(file.absolutePath(), inputFormat) {
 			outputFile, err := file.convert(outputFormat)
 			if err != nil {
-				fmt.Fprintln(os.Stderr, "failed to convert " + file.absolutePath())
+				fmt.Fprintln(os.Stderr, "failed to convert "+file.absolutePath())
 			}
 			convertedFiles = append(convertedFiles, outputFile)
 		}
@@ -48,5 +48,3 @@ func isAvailableFormat(format string) bool {
 		return false
 	}
 }
-
-
