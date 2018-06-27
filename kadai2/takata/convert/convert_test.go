@@ -16,26 +16,18 @@ type Args struct {
 	dstFmt string
 }
 
-var argsList = []Args{
-	{"../test", "jpg", "png"},
-	{"../test", "jpeg", "png"},
-	{"../test", "jpeg", "gif"},
-	{"../test2", "png", "gif"},
-	{"../test2", "png", "jpg"},
-	{"../test3", "gif", "jpg"},
-	{"../test3", "gif", "png"},
-}
-
-var failArgsList = []Args{
-	{"../test", "jpbg", "png"},
-	{"../test", "jpg", "pdf"},
-	{"../test2", "pag", "jpg"},
-	{"../test3", "gof", "jpg"},
-	{"../test2", "png", "gof"},
-	{"../test4", "png", "jpg"},
-}
-
 func TestConvert(t *testing.T) {
+
+	argsList := []Args{
+		{"../testdata/test", "jpg", "png"},
+		{"../testdata/test", "jpeg", "png"},
+		{"../testdata/test", "jpeg", "gif"},
+		{"../testdata/test2", "png", "gif"},
+		{"../testdata/test2", "png", "jpg"},
+		{"../testdata/test3", "gif", "jpg"},
+		{"../testdata/test3", "gif", "png"},
+		{"../testdata/test4", "png", "jpg"},
+	}
 
 	for _, arg := range argsList {
 
@@ -46,6 +38,17 @@ func TestConvert(t *testing.T) {
 			}
 			removeTestOutput("./output")
 		})
+	}
+}
+
+func TestInvalidConvert(t *testing.T) {
+
+	failArgsList := []Args{
+		{"../testdata/test", "jpbg", "png"},
+		{"../testdata/test", "jpg", "pdf"},
+		{"../testdata/test2", "pag", "jpg"},
+		{"../testdata/test3", "gof", "jpg"},
+		{"../testdata/test2", "png", "gof"},
 	}
 
 	for _, arg := range failArgsList {
@@ -58,6 +61,9 @@ func TestConvert(t *testing.T) {
 			removeTestOutput("./output")
 		})
 	}
+}
+
+func TestFail_isFileOrDirExists(t *testing.T) {
 
 	t.Run("NG isFileOrDirExists", func(t *testing.T) {
 		result := isFileOrDirExists("../notfound/1.png")
@@ -65,6 +71,9 @@ func TestConvert(t *testing.T) {
 			t.Error("Invalid Result")
 		}
 	})
+}
+
+func TestFail_dirwalk(t *testing.T) {
 
 	t.Run("NG dirwalk", func(t *testing.T) {
 		_, err := dirwalk("../notfound", "png", "jpg")
@@ -73,7 +82,9 @@ func TestConvert(t *testing.T) {
 			t.Error(err)
 		}
 	})
+}
 
+func TestFail_convert(t *testing.T) {
 	t.Run("NG convert", func(t *testing.T) {
 		err := convert(FileInfo{name: "999", srcFmt: "png", dstFmt: "jpg"})
 		expectedError := errors.New("os.Open() with 999.png: open 999.png: no such file or directory")
@@ -81,7 +92,9 @@ func TestConvert(t *testing.T) {
 			t.Error(err)
 		}
 	})
+}
 
+func TestFail_encode(t *testing.T) {
 	t.Run("NG encode", func(t *testing.T) {
 
 		f := testTempFile(t)
@@ -92,10 +105,11 @@ func TestConvert(t *testing.T) {
 			t.Error(err)
 		}
 	})
+}
 
+func TestFail_decode(t *testing.T) {
 	t.Run("NG decode", func(t *testing.T) {
-
-		f, error := os.Open("../test4/1.txt")
+		f, error := os.Open("../testdata/test4/1.txt")
 		if error != nil {
 			t.Error(error)
 		}
@@ -104,7 +118,6 @@ func TestConvert(t *testing.T) {
 			t.Error(error)
 		}
 	})
-
 }
 
 func testTempFile(t *testing.T) *os.File {
@@ -120,7 +133,7 @@ func testTempFile(t *testing.T) *os.File {
 func testTempImage(t *testing.T) image.Image {
 	t.Helper()
 
-	file, error := os.Open("../test/2.jpg")
+	file, error := os.Open("../testdata/test/2.jpg")
 	if error != nil {
 		t.Error(error)
 	}
