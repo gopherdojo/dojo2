@@ -31,8 +31,10 @@ func TestConvert(t *testing.T) {
 
 	for _, arg := range argsList {
 
+		i := ImageConverter{arg.srcFmt, arg.dstFmt}
+
 		t.Run(fmt.Sprintf("convertTest %s to %s", arg.srcFmt, arg.dstFmt), func(t *testing.T) {
-			err := Convert(arg.dir, arg.srcFmt, arg.dstFmt)
+			err := i.Convert(arg.dir)
 			if err != nil {
 				t.Error(err)
 			}
@@ -53,8 +55,10 @@ func TestInvalidConvert(t *testing.T) {
 
 	for _, arg := range failArgsList {
 
+		i := ImageConverter{arg.srcFmt, arg.dstFmt}
+
 		t.Run(fmt.Sprintf("convertFailTest %s to %s", arg.srcFmt, arg.dstFmt), func(t *testing.T) {
-			err := Convert(arg.dir, arg.srcFmt, arg.dstFmt)
+			err := i.Convert(arg.dir)
 			if err == nil {
 				t.Error("Invalid Convert Result")
 			}
@@ -76,7 +80,10 @@ func TestFail_isFileOrDirExists(t *testing.T) {
 func TestFail_dirwalk(t *testing.T) {
 
 	t.Run("NG dirwalk", func(t *testing.T) {
-		_, err := dirwalk("../notfound", "png", "jpg")
+
+		i := ImageConverter{"png", "jpg"}
+		_, err := i.dirwalk("../notfound")
+
 		expectedError := errors.New("ioutil.ReadDir() with ../notfound: open ../notfound: no such file or directory")
 		if err.Error() != expectedError.Error() {
 			t.Error(err)
@@ -86,7 +93,10 @@ func TestFail_dirwalk(t *testing.T) {
 
 func TestFail_convert(t *testing.T) {
 	t.Run("NG convert", func(t *testing.T) {
-		err := convert(FileInfo{name: "999", srcFmt: "png", dstFmt: "jpg"})
+
+		i := ImageConverter{"png", "jpg"}
+		fi := FileInfo{name: "999"}
+		err := i.convert(fi)
 		expectedError := errors.New("os.Open() with 999.png: open 999.png: no such file or directory")
 		if err.Error() != expectedError.Error() {
 			t.Error(err)
@@ -97,9 +107,10 @@ func TestFail_convert(t *testing.T) {
 func TestFail_encode(t *testing.T) {
 	t.Run("NG encode", func(t *testing.T) {
 
+		i := ImageConverter{"png", "pdf"}
 		f := testTempFile(t)
 		img := testTempImage(t)
-		err := encode("pdf", f, img)
+		err := i.encode(f, img)
 		expectedError := errors.New("不正な画像形式を出力先に指定しています")
 		if err.Error() != expectedError.Error() {
 			t.Error(err)
@@ -113,7 +124,9 @@ func TestFail_decode(t *testing.T) {
 		if error != nil {
 			t.Error(error)
 		}
-		_, error = decode(f)
+
+		i := ImageConverter{"png", "pdf"}
+		_, error = i.decode(f)
 		if error != nil {
 			t.Error(error)
 		}
