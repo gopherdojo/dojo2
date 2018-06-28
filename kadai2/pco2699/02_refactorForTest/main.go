@@ -1,7 +1,7 @@
 package main
 
 import (
-	"dojo2/kadai1/pco2699/lib"
+	"dojo2/kadai2/pco2699/02_refactorForTest/lib"
 	"os"
 )
 

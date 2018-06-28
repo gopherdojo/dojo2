@@ -35,7 +35,7 @@ func assertFile(t *testing.T, path string, expectedFilename string) {
 // assert用の関数を定義(ブーリアン確認用)
 func assertBool(t *testing.T, output bool, expected bool) {
 	if output != expected {
-		t.Errorf("Output expected %q to eq %q", output, expected)
+		t.Errorf("Output expected %v to eq %v", output, expected)
 	}
 }
 
@@ -62,17 +62,36 @@ func copyFile(srcName string, dstName string) {
 // checkcheckUnacceptableFormat関数のテスト
 // .jpg, .png, .gifを入力したときは、falseを返却
 func TestCheckUnacceptableFormatWithAcceptableFormat(t *testing.T) {
-	assertBool(t, checkUnacceptableFormat(".jpg"), false)
-	assertBool(t, checkUnacceptableFormat(".png"), false)
-	assertBool(t, checkUnacceptableFormat(".gif"), false)
+	cases := []struct {name string; input string; expected bool}{
+		{name: "jpg", input: ".jpg", expected: false},
+		{name: "png", input: ".png", expected: false},
+		{name: "gif", input: ".gif", expected: false},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			if actual := checkUnacceptableFormat(c.input); c.expected != actual {
+				t.Errorf("Output expected %v to eq %v", actual, c.expected)
+			}
+		})
+	}
 }
 
 // checkcheckUnacceptableFormat関数のテスト
 // .jpg, .png, .gif以外を入力したときは、trueを返却
 func TestCheckUnacceptableFormatWithUnacceptableFormat(t *testing.T) {
-	assertBool(t, checkUnacceptableFormat(".txt"), true)
-	assertBool(t, checkUnacceptableFormat(".doc"), true)
-	assertBool(t, checkUnacceptableFormat("muga"), true)
+	cases := []struct {name string; input string; expected bool}{
+		{name: "txt", input: ".txt", expected: true},
+		{name: "doc", input: ".doc", expected: true},
+		{name: "muga", input: "muga", expected: true},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			if actual := checkUnacceptableFormat(c.input); c.expected != actual {
+				t.Errorf("Output expected %v to eq %v", actual, c.expected)
+			}
+		})
+	}
 }
 
 // インプット JPGファイル 10枚　ディレクトリ0:ディレクトリ下ファイルなし
@@ -81,7 +100,7 @@ func TestCheckUnacceptableFormatWithUnacceptableFormat(t *testing.T) {
 func TestCliFromJpgToPngWith10pictures(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{OutStream: outStream, ErrStream: errStream}
-	checkPath := "../testImg/jpg1/"
+	checkPath := "../testdata/testImg/jpg1/"
 
 	args := strings.Split("imgConverter -src jpg -dst png "+checkPath, " ")
 
@@ -123,7 +142,7 @@ func TestCliFromJpgToPngWith10pictures(t *testing.T) {
 func TestCliFromJpgToPngWith10picturesWithNoFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{OutStream: outStream, ErrStream: errStream}
-	checkPath := "../testImg/jpg1/"
+	checkPath := "../testdata/testImg/jpg1/"
 
 	args := strings.Split("imgConverter "+checkPath, " ")
 
@@ -164,7 +183,7 @@ func TestCliFromJpgToPngWith10picturesWithNoFlag(t *testing.T) {
 func TestCliFromPngToGifWith10pictures(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{OutStream: outStream, ErrStream: errStream}
-	checkPath := "../testImg/png1/"
+	checkPath := "../testdata/testImg/png1/"
 
 	args := strings.Split("imgConverter -src png -dst gif "+checkPath, " ")
 
@@ -205,7 +224,7 @@ func TestCliFromPngToGifWith10pictures(t *testing.T) {
 func TestCliFromPngToGifWith10picture(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{OutStream: outStream, ErrStream: errStream}
-	checkPath := "../testImg/png1/"
+	checkPath := "../testdata/testImg/png1/"
 
 	args := strings.Split("imgConverter -src png -dst gif "+checkPath, " ")
 
@@ -256,7 +275,7 @@ func TestCliFromPngToGifWith10picture(t *testing.T) {
 func TestCliErrorFileWith1pictures(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{OutStream: outStream, ErrStream: errStream}
-	checkPath := "../testImg/error1/"
+	checkPath := "../testdata/testImg/error1/"
 
 	args := strings.Split("imgConverter -src jpg -dst png "+checkPath, " ")
 
