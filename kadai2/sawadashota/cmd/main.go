@@ -3,11 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
-	"regexp"
-
 	"io"
+	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/gopherdojo/dojo2/kadai2/sawadashota"
 )
