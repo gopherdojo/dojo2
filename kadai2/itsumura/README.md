@@ -1,40 +1,19 @@
-imgChange
-====
+# テスト
 
-jpgファイルをpngに変換したり、pngファイルをjpgに変換するプログラムです。
-
-## Requirement　依存性
-多分無し
-
-## Usage　使い方
-1. imgChangeファイルを画像があるフォルダと同じディレクトリに置きます。
-
-2. コマンドからプログラムを起動します
+実行コマンド
 ```
-$ ./imgChange
-```
-3. カレントディレクトリのファイル一覧が表示されるので、その中から画像ファイルが入っているフォルダ正しく入力します。
-```
-[changefunc imgChange.go pic]
-pic ←入力する
+go test -run ""
 ```
 
-4. 変換先のファイル形式を入力します
+テストカバレッジ表示
 ```
-変換先のファイル形式を選んで下さい
-jpg or png
-png ←入力する
+go test -cover ""
 ```
 
-5. 変換が実行されます。
+# io.Readerとio.Writer
+## 標準パッケージでの使われ方
+- 標準パッケージでの関数で、引数として使われていた
+- 引数として渡された値は、Readerではbufio.NewReader()やbufio.NewScanner()で読み込まれていた
 
-## Install
-imgChangeの実行ファイルを置くだけ。Linuxなら.shの拡張子を、Windowsなら.exeの拡張子をつけてください。
-
-## Licence
-
-[MIT](https://github.com/tcnksm/tool/blob/master/LICENCE)
-
-## Author
-
-[dumblepy](https://github.com/dumblepy)
+## メリット
+- 成功したか否かを取得し、エラーハンドリングを用意にするため？
