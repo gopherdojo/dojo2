@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"image/jpeg"
 	"image/png"
@@ -25,12 +24,8 @@ func TestMain(t *testing.T) {
 	}
 
 	// Create test fixtures
-	if err := createJPEG(filepath.Join(dir, "image1.jpg"), 100, 200); err != nil {
-		t.Fatal(err)
-	}
-	if err := createJPEG(filepath.Join(subdir, "image2.jpg"), 300, 400); err != nil {
-		t.Fatal(err)
-	}
+	createJPEG(t, filepath.Join(dir, "image1.jpg"), 100, 200)
+	createJPEG(t, filepath.Join(subdir, "image2.jpg"), 300, 400)
 	if err := ioutil.WriteFile(filepath.Join(subdir, "dummy.txt"), []byte("dummy"), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -42,26 +37,19 @@ func TestMain(t *testing.T) {
 	main()
 
 	// Assert that destination contains PNG files
-	if err := assertFilesIn(dir, []string{"image1.jpg", "image1.png"}); err != nil {
-		t.Error(err)
-	}
-	if err := assertFilesIn(subdir, []string{"dummy.txt", "image2.jpg", "image2.png"}); err != nil {
-		t.Error(err)
-	}
+	assertFilesIn(t, dir, []string{"image1.jpg", "image1.png"})
+	assertFilesIn(t, subdir, []string{"dummy.txt", "image2.jpg", "image2.png"})
 
 	// Assert that PNG files are valid
-	if err := assertPNG(filepath.Join(dir, "image1.png"), 100, 200); err != nil {
-		t.Error(err)
-	}
-	if err := assertPNG(filepath.Join(subdir, "image2.png"), 300, 400); err != nil {
-		t.Error(err)
-	}
+	assertPNG(t, filepath.Join(dir, "image1.png"), 100, 200)
+	assertPNG(t, filepath.Join(subdir, "image2.png"), 300, 400)
 }
 
-func assertFilesIn(dir string, expectedFiles []string) error {
+func assertFilesIn(t *testing.T, dir string, expectedFiles []string) {
+	t.Helper()
 	children, err := ioutil.ReadDir(dir)
 	if err != nil {
-		return err
+		t.Fatal(err)
 	}
 	files := make([]string, 0)
 	for _, child := range children {
@@ -70,33 +58,35 @@ func assertFilesIn(dir string, expectedFiles []string) error {
 		}
 	}
 	if !reflect.DeepEqual(expectedFiles, files) {
-		return fmt.Errorf("Directory %s wants %v but %v", dir, expectedFiles, files)
+		t.Errorf("Directory %s wants %v but %v", dir, expectedFiles, files)
 	}
-	return nil
 }
 
-func createJPEG(name string, width int, height int) error {
+func createJPEG(t *testing.T, name string, width int, height int) {
+	t.Helper()
 	r, err := os.Create(name)
 	if err != nil {
-		return err
+		t.Fatal(err)
 	}
 	defer r.Close()
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
-	return jpeg.Encode(r, img, nil)
+	if err := jpeg.Encode(r, img, nil); err != nil {
+		t.Fatal(err)
+	}
 }
 
-func assertPNG(name string, width int, height int) error {
+func assertPNG(t *testing.T, name string, width int, height int) {
+	t.Helper()
 	r, err := os.Open(name)
 	if err != nil {
-		return err
+		t.Fatal(err)
 	}
 	defer r.Close()
 	c, err := png.DecodeConfig(r)
 	if err != nil {
-		return err
+		t.Fatal(err)
 	}
 	if c.Width != width || c.Height != height {
-		return fmt.Errorf("PNG %s wants %dx%d but %dx%d", name, width, height, c.Width, c.Height)
+		t.Errorf("PNG %s wants %dx%d but %dx%d", name, width, height, c.Width, c.Height)
 	}
-	return nil
 }
