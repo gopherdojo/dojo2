@@ -29,14 +29,14 @@ func TestSearchDir(t *testing.T) {
 	}
 
 	//テーブル駆動型
-	cases := []struct{
+	cases := []struct {
 		dir string
 	}{
 		{dir: "../pic"},
-		{dir : "aaa"}, //エラー
+		{dir: "aaa"}, //エラー
 	}
 
-	for _, c := range cases{
+	for _, c := range cases {
 		results, err = searchDir(c.dir)
 		if err != nil {
 			t.Fatal("failed test")
