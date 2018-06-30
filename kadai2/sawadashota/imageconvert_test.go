@@ -35,18 +35,37 @@ func TestImageToPng(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		if _, err := os.Stat(c.imgPath); err != nil {
-			t.Fatalf("%s", err)
-		}
-
-		i, err := sawadashota.New(c.imgPath)
-
-		if err != nil {
-			t.Errorf("%s", err)
-		}
-
 		t.Run(c.name, func(t *testing.T) {
-			testImage(t, c.imgPath, c.dest, "gif", i.ToGif)
+			i := testNewImage(t, c.imgPath)
+
+			if err := i.ToPng(c.dest); err != nil {
+				t.Errorf("%s", err)
+			}
+
+			if _, err := os.Stat(c.dest); err != nil {
+				t.Errorf("%s", err)
+			}
+
+			file, err := os.Open(c.dest)
+
+			if err != nil {
+				t.Fatalf("%s", err)
+			}
+			defer file.Close()
+
+			_, format, err := image.Decode(file)
+
+			if err != nil {
+				t.Errorf("%s", err)
+			}
+
+			if format != "png" {
+				t.Errorf("expect %s but %s", "png", format)
+			}
+
+			if os.Remove(c.dest) != nil {
+				t.Fatalf("%s", err)
+			}
 		})
 	}
 }
@@ -78,17 +97,36 @@ func TestImageToJpeg(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			if _, err := os.Stat(c.imgPath); err != nil {
-				t.Fatalf("%s", err)
+			i := testNewImage(t, c.imgPath)
+
+			if err := i.ToJpeg(c.dest); err != nil {
+				t.Errorf("%s", err)
 			}
 
-			i, err := sawadashota.New(c.imgPath)
+			if _, err := os.Stat(c.dest); err != nil {
+				t.Errorf("%s", err)
+			}
+
+			file, err := os.Open(c.dest)
+
+			if err != nil {
+				t.Fatalf("%s", err)
+			}
+			defer file.Close()
+
+			_, format, err := image.Decode(file)
 
 			if err != nil {
 				t.Errorf("%s", err)
 			}
 
-			testImage(t, c.imgPath, c.dest, "gif", i.ToGif)
+			if format != "jpeg" {
+				t.Errorf("expect %s but %s", "jpeg", format)
+			}
+
+			if os.Remove(c.dest) != nil {
+				t.Fatalf("%s", err)
+			}
 		})
 	}
 }
@@ -119,55 +157,53 @@ func TestImageToGif(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		if _, err := os.Stat(c.imgPath); err != nil {
-			t.Fatalf("%s", err)
-		}
-
-		i, err := sawadashota.New(c.imgPath)
-
-		if err != nil {
-			t.Fatalf("%s", err)
-		}
-
 		t.Run(c.name, func(t *testing.T) {
-			testImage(t, c.imgPath, c.dest, "gif", i.ToGif)
+			i := testNewImage(t, c.imgPath)
+
+			if err := i.ToGif(c.dest); err != nil {
+				t.Errorf("%s", err)
+			}
+
+			if _, err := os.Stat(c.dest); err != nil {
+				t.Errorf("%s", err)
+			}
+
+			file, err := os.Open(c.dest)
+
+			if err != nil {
+				t.Fatalf("%s", err)
+			}
+			defer file.Close()
+
+			_, format, err := image.Decode(file)
+
+			if err != nil {
+				t.Errorf("%s", err)
+			}
+
+			if format != "gif" {
+				t.Errorf("expect %s but %s", "gif", format)
+			}
+
+			if os.Remove(c.dest) != nil {
+				t.Fatalf("%s", err)
+			}
 		})
 	}
 }
 
-func testImage(t *testing.T, imgPath, dest, expectExt string, convert func(dest string) error) {
+func testNewImage(t *testing.T, imgPath string) *sawadashota.Image {
 	t.Helper()
 
 	if _, err := os.Stat(imgPath); err != nil {
 		t.Fatalf("%s", err)
 	}
 
-	if err := convert(dest); err != nil {
-		t.Errorf("%s", err)
-	}
-
-	if _, err := os.Stat(dest); err != nil {
-		t.Errorf("%s", err)
-	}
-
-	file, err := os.Open(dest)
+	i, err := sawadashota.New(imgPath)
 
 	if err != nil {
 		t.Fatalf("%s", err)
 	}
-	defer file.Close()
 
-	_, format, err := image.Decode(file)
-
-	if err != nil {
-		t.Errorf("%s", err)
-	}
-
-	if format != expectExt {
-		t.Errorf("expect %s but %s", expectExt, format)
-	}
-
-	if os.Remove(dest) != nil {
-		t.Fatalf("%s", err)
-	}
+	return i
 }
