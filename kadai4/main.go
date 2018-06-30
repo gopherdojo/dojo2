@@ -8,23 +8,47 @@ import (
 	"io/ioutil"
 )
 
+type PartialData struct {
+	index int
+	data []byte
+}
+
 func main() {
-	const Split = 10
+	const Split = 1
 	url := "https://kaboompics.com/cache/6/e/e/8/1/6ee81e1477ee1a9610149d0fe7fbd952213ba11d.jpeg?version=v3"
 	fileSize, _, e := GetFileSize(url)
 	if e != nil {
 		os.Exit(1)
 	}
 	fileRanges := splitRange(fileSize, Split)
-	var bodies []byte
-	for _, r := range fileRanges {
-		body, _, err := RangeLoad(url, r)
-		if err != nil {
-			os.Exit(1)
-		}
-		bodies = append(bodies, body...)
+	bodies := make([][]byte, len(fileRanges))
+	ch := make(chan PartialData)
+	for i, v := range fileRanges {
+		go storePartialData(ch, url, i, v)
 	}
-	ioutil.WriteFile("image.jpeg", bodies, 0666)
+	count := 0
+	for ;; {
+		data := <- ch
+		bodies[data.index] = data.data
+		count = count + 1
+		if count == Split {
+			close(ch)
+			break
+		}
+	}
+	var result []byte
+	for _, v := range bodies {
+		result = append(result, v...)
+	}
+	ioutil.WriteFile("image.jpeg", result, 0666)
+}
+
+func storePartialData(ch chan <- PartialData, url string, index int, fileRange string) {
+	body, _, err := RangeLoad(url, fileRange)
+	if err != nil {
+		os.Exit(1)
+	}
+	ch <- PartialData{index: index, data: body}
 }
 
 // return "0-100"
