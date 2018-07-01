@@ -30,6 +30,7 @@ func main() {
 		select {
 		case <-signalCh:
 			cancel()
+			os.Exit(1)
 		}
 	}()
 	start := time.Now().UnixNano()
@@ -63,13 +64,14 @@ func main() {
 	fmt.Println((end - start) / 1000 / 1000)
 }
 
-func storePartialData(ctx context.Context, ch chan <- PartialData, url string, index int, fileRange string) {
+func storePartialData(ctx context.Context, ch chan <- PartialData, url string, index int, fileRange string) error {
 	body, _, err := RangeLoad(ctx, url, fileRange)
 	if err != nil {
-		os.Exit(1)
+		return err
 	}
 	ch <- PartialData{index: index, data: body}
 	defer close(ch)
+	return nil
 }
 
 // return "0-100"
