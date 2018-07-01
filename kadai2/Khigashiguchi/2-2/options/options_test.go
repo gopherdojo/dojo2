@@ -70,3 +70,95 @@ func TestParse(t *testing.T) {
 		})
 	}
 }
+
+func TestOptions_Decode(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+	}{
+		{
+			name: "JPG",
+			in:   "jpg",
+		},
+		{
+			name: "PNG",
+			in:   "png",
+		},
+	}
+	for _, tt := range cases {
+		opts := &options.Options{
+			Files: []string{"sample.jpg", "sample1.jpg"},
+			In:    tt.in,
+			Out:   "png",
+		}
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := opts.Decoder()
+			if err != nil {
+				t.Errorf(`expect err is nil, actual err is %s`, err)
+			}
+			// FIXME: どのdecoderが来たのかを確認したい
+		})
+	}
+}
+
+func TestOptions_DecodeUnknown(t *testing.T) {
+	opts := &options.Options{
+		Files: []string{"sample.jpg", "sample1.jpg"},
+		In:    "unknown",
+		Out:   "png",
+	}
+	_, err := opts.Decoder()
+	if err == nil {
+		t.Error(`expect err is not nil`)
+	}
+	expected := errors.New("Unknown extention type: unknown")
+	if err.Error() != expected.Error() {
+		t.Errorf(`expect err is %s, actual err is %s`, err.Error(), expected)
+	}
+}
+
+func TestOptions_Encode(t *testing.T) {
+	cases := []struct {
+		name string
+		out  string
+	}{
+		{
+			name: "JPG",
+			out:  "jpg",
+		},
+		{
+			name: "PNG",
+			out:  "png",
+		},
+	}
+	for _, tt := range cases {
+		opts := &options.Options{
+			Files: []string{"sample.jpg", "sample1.jpg"},
+			In:    "jpg",
+			Out:   tt.out,
+		}
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := opts.Encoder()
+			if err != nil {
+				t.Errorf(`expect err is nil, actual err is %s`, err)
+			}
+			// FIXME: どのdecoderが来たのかを確認したい
+		})
+	}
+}
+
+func TestOptions_EncodeUnknown(t *testing.T) {
+	opts := &options.Options{
+		Files: []string{"sample.jpg", "sample1.jpg"},
+		In:    "png",
+		Out:   "unknown",
+	}
+	_, err := opts.Encoder()
+	if err == nil {
+		t.Error(`expect err is not nil`)
+	}
+	expected := errors.New("Unknown extention type: unknown")
+	if err.Error() != expected.Error() {
+		t.Errorf(`expect err is %s, actual err is %s`, err.Error(), expected)
+	}
+}
