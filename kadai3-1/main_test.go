@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"io"
+	"os"
 	"testing"
 )
 
@@ -18,7 +20,19 @@ func TestChoose(t *testing.T) {
 }
 
 func TestInput(t *testing.T) {
-
+	t.Helper()
+	file, err := os.Open("test_input/input_sample.txt")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+	result := q.input(file)
+	expected := "dog"
+	r := <-result
+	if r != expected {
+		t.Error(r)
+		t.Error(expected)
+	}
 }
 
 type mockQuestion struct{}
