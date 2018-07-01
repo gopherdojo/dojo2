@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strconv"
 	"io/ioutil"
+	"fmt"
+	"time"
 )
 
 type PartialData struct {
@@ -14,7 +16,8 @@ type PartialData struct {
 }
 
 func main() {
-	const Split = 1
+	start := time.Now().UnixNano()
+	const Split = 200
 	url := "https://www.noao.edu/image_gallery/images/d7/cygloop-8000.jpg"
 	fileSize, _, e := GetFileSize(url)
 	if e != nil {
@@ -22,25 +25,25 @@ func main() {
 	}
 	fileRanges := splitRange(fileSize, Split)
 	bodies := make([][]byte, len(fileRanges))
-	ch := make(chan PartialData)
+	chs := make([]chan PartialData, 0)
 	for i, v := range fileRanges {
+		ch := make(chan PartialData)
 		go storePartialData(ch, url, i, v)
+		chs = append(chs, ch)
 	}
-	count := 0
-	for ;; {
-		data := <- ch
+	for _, c := range chs {
+		data := <- c
 		bodies[data.index] = data.data
-		count = count + 1
-		if count == Split {
-			close(ch)
-			break
-		}
+		fmt.Println(data.index)
 	}
+
 	var result []byte
 	for _, v := range bodies {
 		result = append(result, v...)
 	}
 	ioutil.WriteFile("image.jpeg", result, 0666)
+	end := time.Now().UnixNano()
+	fmt.Println((end - start) / 1000 / 1000)
 }
 
 func storePartialData(ch chan <- PartialData, url string, index int, fileRange string) {
@@ -49,6 +52,7 @@ func storePartialData(ch chan <- PartialData, url string, index int, fileRange s
 		os.Exit(1)
 	}
 	ch <- PartialData{index: index, data: body}
+	close(ch)
 }
 
 // return "0-100"
