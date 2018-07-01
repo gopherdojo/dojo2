@@ -9,11 +9,13 @@ import (
 	"time"
 )
 
+// CLI - struct for cli
 type CLI struct {
 	InStream             io.Reader
 	OutStream, ErrStream io.Writer
 }
 
+// const for exit code
 const (
 	ExitCodeOK = iota
 	ExitCodeParseFlagError
@@ -32,6 +34,7 @@ func init() {
 	qaMap = tmpMap
 }
 
+// Input - send input
 func (c *CLI) Input(r io.Reader) <-chan string {
 	ch := make(chan string)
 	go func() {
@@ -44,10 +47,12 @@ func (c *CLI) Input(r io.Reader) <-chan string {
 	return ch
 }
 
+// TimeAfter - wrap time.After
 func (c *CLI) TimeAfter(d time.Duration) <-chan time.Time {
 	return time.After(d)
 }
 
+// Judge - judge of input
 func (c *CLI) Judge(count int, question, answer string) int {
 	if qaMap[question] == answer {
 		count++
@@ -55,6 +60,7 @@ func (c *CLI) Judge(count int, question, answer string) int {
 	return count
 }
 
+// Run - run typing game
 func (c *CLI) Run(args []string) int {
 	var s int64
 	flags := flag.NewFlagSet(args[0], flag.ContinueOnError)
