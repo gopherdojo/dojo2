@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/gopherdojo/dojo2/kadai2/cappyzawa/cmd/kadai2/main.go (73.3%)</option>
+				
+				<option value="file1">github.com/gopherdojo/dojo2/kadai2/cappyzawa/command.go (93.8%)</option>
+				
+				<option value="file2">github.com/gopherdojo/dojo2/kadai2/cappyzawa/decoder.go (0.0%)</option>
+				
+				<option value="file3">github.com/gopherdojo/dojo2/kadai2/cappyzawa/encoder.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "flag"
+        "fmt"
+        "io"
+        "os"
+
+        "image/jpeg"
+
+        "github.com/gopherdojo/dojo2/kadai2/cappyzawa"
+)
+
+// CLI - struct having stream fields
+type CLI struct {
+        OutStream, ErrStream io.Writer
+}
+
+const (
+        ExitCodeOK = iota
+        ExitCodeParseFlagError
+        ExitCodeInvalidFormat
+        ExitCodeFailedRun
+)
+
+// Execute - execute conversion
+func (c *CLI) Execute(args []string) int <span class="cov5" title="3">{
+        var f, t string
+        flags := flag.NewFlagSet(args[0], flag.ContinueOnError)
+        flags.SetOutput(c.ErrStream)
+        flags.StringVar(&amp;f, "f", "jpeg", "enable to select format before conversion")
+        flags.StringVar(&amp;t, "t", "png", "enable to select format after conversion")
+
+        if err := flags.Parse(args[1:]); err != nil </span><span class="cov1" title="1">{
+                return ExitCodeParseFlagError
+        }</span>
+
+        <span class="cov4" title="2">if len(flags.Args()) == 0 </span><span class="cov0" title="0">{
+                fmt.Fprintf(c.ErrStream, "Usage: %s [-n] dir_path...\n", args[0])
+                return ExitCodeParseFlagError
+        }</span>
+
+        <span class="cov4" title="2">dirIndex := 0
+        dir := flags.Arg(dirIndex)
+
+        decoder := conv.NewDecoder()
+        var encoder conv.Encoder
+        if t == "jpeg" </span><span class="cov1" title="1">{
+                encoder = &amp;conv.Jpeg{Options: &amp;jpeg.Options{Quality: jpeg.DefaultQuality}}
+        }</span> else<span class="cov1" title="1"> if t == "png" </span><span class="cov1" title="1">{
+                encoder = &amp;conv.Png{}
+        }</span> else<span class="cov0" title="0"> {
+                fmt.Fprint(c.ErrStream, "invalid format\n")
+                return ExitCodeInvalidFormat
+        }</span>
+        <span class="cov4" title="2">command := conv.NewCommand(decoder, encoder)
+
+        files, err := command.Run(dir, f, t)
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Fprintf(c.ErrStream, "%s\n", err.Error())
+                return ExitCodeFailedRun
+        }</span>
+        <span class="cov4" title="2">for _, file := range files </span><span class="cov10" title="8">{
+                fmt.Fprintf(c.OutStream, "created file: %s\n", file)
+        }</span>
+        <span class="cov4" title="2">return ExitCodeOK</span>
+}
+
+func main() <span class="cov0" title="0">{
+        cli := &amp;CLI{OutStream: os.Stdout, ErrStream: os.Stderr}
+        os.Exit(cli.Execute(os.Args))
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package conv
+
+import (
+        "fmt"
+        "os"
+        "path/filepath"
+)
+
+type Command struct {
+        decoder Decoder
+        encoder Encoder
+}
+
+func NewCommand(decoder Decoder, encoder Encoder) *Command <span class="cov5" title="6">{
+        return &amp;Command{
+                decoder: decoder,
+                encoder: encoder,
+        }
+}</span>
+
+// Run - execute Command
+func (c *Command) Run(dir, from, to string) ([]string, error) <span class="cov5" title="6">{
+        fExt := fmt.Sprintf(".%s", from)
+        var createdFiles []string
+        err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error </span><span class="cov10" title="29">{
+                if filepath.Ext(path) == fExt </span><span class="cov7" title="10">{
+                        newFile, err := c.convert(path, to)
+                        if err != nil </span><span class="cov2" title="2">{
+                                return err
+                        }</span>
+                        <span class="cov6" title="8">createdFiles = append(createdFiles, newFile.Name())
+                        return nil</span>
+                }
+                <span class="cov8" title="19">return err</span>
+        })
+        <span class="cov5" title="6">if err != nil </span><span class="cov3" title="3">{
+                return nil, err
+        }</span>
+        <span class="cov3" title="3">return createdFiles, nil</span>
+}
+
+func (c *Command) convert(path, to string) (*os.File, error) <span class="cov7" title="10">{
+        file, err := os.Open(path)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov7" title="10">defer file.Close()
+        img, _, err := c.decoder.Decode(file)
+        if err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov6" title="9">newFile, err := c.createOutputFile(path, to)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov6" title="9">defer newFile.Close()
+        if err := c.encoder.Encode(newFile, img); err != nil </span><span class="cov1" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov6" title="8">return newFile, nil</span>
+}
+
+func (c *Command) createOutputFile(path, to string) (*os.File, error) <span class="cov6" title="9">{
+        tExt := fmt.Sprintf(".%s", to)
+        baseExt := filepath.Ext(path)
+        newFile := path[:len(path)-len(baseExt)] + tExt
+        return os.Create(newFile)
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package conv
+
+import (
+        "image"
+        "io"
+)
+
+// Decoder - interface defining a method for decode
+type Decoder interface {
+        Decode(r io.Reader) (image.Image, string, error)
+}
+
+type decoder struct{}
+
+func NewDecoder() Decoder <span class="cov0" title="0">{
+        return &amp;decoder{}
+}</span>
+
+// Decode - wrap https://godoc.org/image#Decode
+func (decoder) Decode(r io.Reader) (image.Image, string, error) <span class="cov0" title="0">{
+        return image.Decode(r)
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package conv
+
+import (
+        "image"
+        "image/jpeg"
+        "image/png"
+        "io"
+)
+
+// Encoder - interface defining a method for encode
+type Encoder interface {
+        Encode(w io.Writer, m image.Image) error
+}
+
+// Jpeg - struct for operating https://godoc.org/image/jpeg
+type Jpeg struct {
+        Options *jpeg.Options
+}
+
+// Png - struct for operation https://godoc.org/image/png
+type Png struct {
+}
+
+// Encode - wrap https://godoc.org/image/jpeg#Encode
+func (j *Jpeg) Encode(w io.Writer, m image.Image) error <span class="cov0" title="0">{
+        return jpeg.Encode(w, m, j.Options)
+}</span>
+
+// Encode - wrap https://godoc.org/image/png#Encode
+func (p *Png) Encode(w io.Writer, m image.Image) error <span class="cov0" title="0">{
+        return png.Encode(w, m)
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
