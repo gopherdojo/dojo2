@@ -27,11 +27,12 @@ func main() {
 		syscall.SIGINT,
 	)
 	go func() {
-		select {
-		case <-signalCh:
-			cancel()
-			os.Exit(1)
-		}
+		<-signalCh
+		cancel()
+	}()
+	go func() {
+		<-ctx.Done()
+		os.Exit(1)
 	}()
 	start := time.Now().UnixNano()
 	const Split = 200
@@ -114,6 +115,7 @@ func RangeLoad(ctx context.Context, url string, fileRange string) (body []byte, 
 	client := new(http.Client)
 	resp, err := client.Do(req)
 	if err != nil {
+		fmt.Println(err)
 		return errReturn(err)
 	}
 	body, err = ioutil.ReadAll(resp.Body)
