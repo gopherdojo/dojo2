@@ -1,5 +1,5 @@
 conv
-fixtures/jpeg/*.png
-fixtures/jpeg/test/*.png
-fixtures/png/*.jpeg
-fixtures/png/test/*jpeg
+testdata/jpeg/*.png
+testdata/jpeg/test/*.png
+testdata/png/*.jpeg
+testdata/png/test/*jpeg

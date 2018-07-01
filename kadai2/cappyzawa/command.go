@@ -20,20 +20,18 @@ func NewCommand(decoder Decoder, encoder Encoder) *Command {
 
 // Run - execute Command
 func (c *Command) Run(dir, from, to string) ([]string, error) {
-	if _, err := os.Stat(dir); err != nil {
-		return nil, err
-	}
 	fExt := fmt.Sprintf(".%s", from)
 	var createdFiles []string
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if filepath.Ext(path) == fExt {
-			if err := c.convert(path, to); err != nil {
+			newFile, err := c.convert(path, to)
+			if err != nil {
 				return err
 			}
-			createdFiles = append(createdFiles, path)
+			createdFiles = append(createdFiles, newFile.Name())
 			return nil
 		}
-		return nil
+		return err
 	})
 	if err != nil {
 		return nil, err
@@ -41,27 +39,27 @@ func (c *Command) Run(dir, from, to string) ([]string, error) {
 	return createdFiles, nil
 }
 
-func (c *Command) convert(path, to string) error {
+func (c *Command) convert(path, to string) (*os.File, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer file.Close()
 	img, _, err := c.decoder.Decode(file)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	newFile, err := c.createOutputFile(path, to)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer newFile.Close()
 	if err := c.encoder.Encode(newFile, img); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return newFile, nil
 }
 
 func (c *Command) createOutputFile(path, to string) (*os.File, error) {
