@@ -24,6 +24,7 @@ func TestCLI_Run(t *testing.T) {
 	t.Run("codeOk", func(t *testing.T) {
 		t.Helper()
 		file, err := os.Open("../../testdata/answer.txt")
+		defer file.Close()
 		if err != nil {
 			t.Error("file does not exist")
 		}
