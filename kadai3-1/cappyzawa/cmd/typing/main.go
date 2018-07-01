@@ -17,7 +17,6 @@ type CLI struct {
 const (
 	ExitCodeOK = iota
 	ExitCodeParseFlagError
-	ExitCodeTimeoutError
 )
 
 var (
@@ -80,7 +79,7 @@ func (c *CLI) Run(args []string) int {
 			return ExitCodeOK
 		}
 	}
-	return ExitCodeTimeoutError
+	return ExitCodeOK
 }
 
 func main() {

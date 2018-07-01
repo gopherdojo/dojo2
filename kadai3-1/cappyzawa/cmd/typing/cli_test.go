@@ -15,7 +15,7 @@ func TestCLI_Run(t *testing.T) {
 			OutStream: outStream,
 			ErrStream: errStream,
 		}
-		args := strings.Split("mytyping -invalid", " ")
+		args := strings.Split("typing -invalid", " ")
 		actual := cli.Run(args)
 		if actual != ExitCodeParseFlagError {
 			t.Errorf("actual should be %d, actual is %d", ExitCodeParseFlagError, actual)
@@ -34,7 +34,7 @@ func TestCLI_Run(t *testing.T) {
 			OutStream: outStream,
 			ErrStream: errStream,
 		}
-		args := strings.Split("mytyping -s 5", " ")
+		args := strings.Split("typing -s 1", " ")
 		actual := cli.Run(args)
 		if actual != ExitCodeOK {
 			t.Errorf("actual should be %d, actual is %d", ExitCodeOK, actual)
