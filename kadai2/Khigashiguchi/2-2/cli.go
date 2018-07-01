@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -10,8 +11,14 @@ import (
 	"github.com/gopherdojo/dojo2/kadai2/Khigashiguchi/2-2/options"
 )
 
-func main() {
-	opts, err := options.Parse(os.Args)
+// CLI represents in/out
+type CLI struct {
+	outStream, errStream io.Writer
+}
+
+// Run execute cli flow
+func (c *CLI) Run(args []string) {
+	opts, err := options.Parse(args)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "parse errors caused. %s.\n", err)
 		os.Exit(1)
@@ -46,4 +53,10 @@ func main() {
 			log.Printf("Skipped %s: %s", file, err)
 		}
 	}
+}
+
+func main() {
+	cli := &CLI{outStream: os.Stdout, errStream: os.Stderr}
+	cli.Run(os.Args)
+	os.Exit(0)
 }
