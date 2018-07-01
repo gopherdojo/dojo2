@@ -14,6 +14,7 @@ func TestCLI_Execute(t *testing.T) {
 		{name: "parseFlagError", input: "myconv -invalid jpeg -t png ../../testdata/jpeg", expected: ExitCodeParseFlagError},
 	}
 	for _, c := range cases {
+		t.Helper()
 		t.Run(c.name, func(t *testing.T) {
 			outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 			cli := &CLI{outStream, errStream}

@@ -12,6 +12,7 @@ import (
 
 func TestCommand_Run(t *testing.T) {
 	t.Run("jpegToPng", func(t *testing.T) {
+		t.Helper()
 		expect := []string{
 			"testdata/jpeg/gopher.png",
 			"testdata/jpeg/kadai1.png",
@@ -25,7 +26,7 @@ func TestCommand_Run(t *testing.T) {
 		if err != nil {
 			t.Error(err.Error())
 		}
-		if len(actual[0]) == 0 {
+		if len(actual[0]) != 0 {
 			t.Error("actual's size is 0")
 		}
 		if !reflect.DeepEqual(expect, actual) {
@@ -33,6 +34,7 @@ func TestCommand_Run(t *testing.T) {
 		}
 	})
 	t.Run("pngToJpeg", func(t *testing.T) {
+		t.Helper()
 		expect := []string{
 			"testdata/png/gopher.jpeg",
 			"testdata/png/kadai1.jpeg",
@@ -54,6 +56,7 @@ func TestCommand_Run(t *testing.T) {
 		}
 	})
 	t.Run("directory not found", func(t *testing.T) {
+		t.Helper()
 		decoder := &MockDecoder{}
 		encoder := &MockEncoder{}
 		command := conv.NewCommand(decoder, encoder)
@@ -66,6 +69,7 @@ func TestCommand_Run(t *testing.T) {
 		}
 	})
 	t.Run("target file does not exist", func(t *testing.T) {
+		t.Helper()
 		decoder := &MockDecoder{}
 		encoder := &MockEncoder{}
 		command := conv.NewCommand(decoder, encoder)
@@ -78,6 +82,7 @@ func TestCommand_Run(t *testing.T) {
 		}
 	})
 	t.Run("failed to decode", func(t *testing.T) {
+		t.Helper()
 		decoder := &MockErrDecoder{}
 		encoder := &MockEncoder{}
 		command := conv.NewCommand(decoder, encoder)
@@ -91,6 +96,7 @@ func TestCommand_Run(t *testing.T) {
 		}
 	})
 	t.Run("failed to encode", func(t *testing.T) {
+		t.Helper()
 		decoder := &MockDecoder{}
 		encoder := &MockErrEncoder{}
 		command := conv.NewCommand(decoder, encoder)
