@@ -15,7 +15,7 @@ type PartialData struct {
 
 func main() {
 	const Split = 1
-	url := "https://kaboompics.com/cache/6/e/e/8/1/6ee81e1477ee1a9610149d0fe7fbd952213ba11d.jpeg?version=v3"
+	url := "https://www.noao.edu/image_gallery/images/d7/cygloop-8000.jpg"
 	fileSize, _, e := GetFileSize(url)
 	if e != nil {
 		os.Exit(1)
