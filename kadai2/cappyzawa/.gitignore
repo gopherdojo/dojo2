@@ -1,0 +1,5 @@
+conv
+testdata/jpeg/*.png
+testdata/jpeg/test/*.png
+testdata/png/*.jpeg
+testdata/png/test/*jpeg
