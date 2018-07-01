@@ -2,9 +2,9 @@ package main
 
 import (
 	"bytes"
+	"os"
 	"strings"
 	"testing"
-	"os"
 )
 
 func TestCLI_Run(t *testing.T) {
@@ -30,7 +30,7 @@ func TestCLI_Run(t *testing.T) {
 		inStream := file
 		outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 		cli := &CLI{
-			InStream: inStream,
+			InStream:  inStream,
 			OutStream: outStream,
 			ErrStream: errStream,
 		}
