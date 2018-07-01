@@ -11,7 +11,18 @@ import (
 )
 
 func TestJPEG_Decode(t *testing.T) {
-	// TODO: io.Readerを作る場所をテストヘルパーに切り出す
+	file := helperGetIoReader(t)
+	dc := format.JPEG{Options: jpeg.Options{Quality: 100}}
+	_, _ = dc.Decode(file)
+	// FIXME: `unexpected EOF`が出るがどうすればいいか
+	// if err != nil {
+	// 	t.Errorf(`Unexpected error happen. %s`, err)
+	// }
+	// FIXME: image.Imageのテストとは
+}
+
+func helperGetIoReader(t *testing.T) *os.File {
+	t.Helper()
 	jpegImg := image.NewRGBA(image.Rect(0, 0, 100, 200))
 	jpegFile, err := ioutil.TempFile("", "jpeg")
 	if err != nil {
@@ -22,14 +33,7 @@ func TestJPEG_Decode(t *testing.T) {
 	if err := jpeg.Encode(jpegFile, jpegImg, nil); err != nil {
 		panic(err)
 	}
-
-	dc := format.JPEG{Options: jpeg.Options{Quality: 100}}
-	_, err = dc.Decode(jpegFile)
-	// FIXME: `unexpected EOF`が出るがどうすればいいか
-	// if err != nil {
-	// 	t.Errorf(`Unexpected error happen. %s`, err)
-	// }
-	// FIXME: image.Imageのテストとは
+	return jpegFile
 }
 
 // TODO: TestPNG_Encode
