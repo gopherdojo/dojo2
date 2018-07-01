@@ -8,7 +8,11 @@ import (
 
 func TestCLI_Execute(t *testing.T) {
 
-	cases := []struct{name string; input string; expected int}{
+	cases := []struct {
+		name     string
+		input    string
+		expected int
+	}{
 		{name: "jpegToPng", input: "myconv -f png -t jpeg ../../testdata/png", expected: ExitCodeOK},
 		{name: "pngToJpeg", input: "myconv -f jpeg -t png ../../testdata/jpeg", expected: ExitCodeOK},
 		{name: "parseFlagError", input: "myconv -invalid jpeg -t png ../../testdata/jpeg", expected: ExitCodeParseFlagError},

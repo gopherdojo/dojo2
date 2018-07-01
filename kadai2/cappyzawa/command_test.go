@@ -1,13 +1,13 @@
 package conv_test
 
 import (
+	"errors"
 	"image"
 	"io"
 	"reflect"
 	"testing"
 
 	"github.com/gopherdojo/dojo2/kadai2/cappyzawa"
-	"errors"
 )
 
 func TestCommand_Run(t *testing.T) {
