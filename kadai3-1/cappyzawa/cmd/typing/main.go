@@ -85,6 +85,7 @@ func (c *CLI) Run(args []string) int {
 			return ExitCodeOK
 		}
 	}
+	fmt.Fprintf(c.OutStream, "\nperfect!!\ncorrect: %d\n", count)
 	return ExitCodeOK
 }
 

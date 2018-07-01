@@ -25,7 +25,7 @@ func TestCLI_Run(t *testing.T) {
 		t.Helper()
 		file, err := os.Open("../../testdata/answer.txt")
 		if err != nil {
-			t.Error("file does not ")
+			t.Error("file does not exist")
 		}
 		inStream := file
 		outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
@@ -38,6 +38,10 @@ func TestCLI_Run(t *testing.T) {
 		actual := cli.Run(args)
 		if actual != ExitCodeOK {
 			t.Errorf("actual should be %d, actual is %d", ExitCodeOK, actual)
+		}
+		isCorrectContain := strings.Contains(outStream.String(), "correct")
+		if !isCorrectContain {
+			t.Error("outStream should contain correct")
 		}
 	})
 }
