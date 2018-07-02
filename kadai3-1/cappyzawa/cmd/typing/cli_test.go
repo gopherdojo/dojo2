@@ -42,8 +42,7 @@ func TestCLI_Run(t *testing.T) {
 			t.Errorf("actual should be %d, actual is %d", expect, actual)
 		}
 		isCorrectContain := strings.Contains(outStream.String(), "correct")
-		isPerfectContain := strings.Contains(outStream.String(), "perfect!!")
-		if !isCorrectContain || !isPerfectContain {
+		if !isCorrectContain {
 			t.Error("outStream should contain correct")
 		}
 	})
