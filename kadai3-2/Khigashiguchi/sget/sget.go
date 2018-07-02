@@ -2,6 +2,7 @@ package sget
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 )
 
@@ -21,7 +22,9 @@ func (sget *Sget) Run() error {
 		return err
 	}
 
-	fmt.Println(sget.URL)
+	if err := sget.RequestHeader(); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -33,5 +36,15 @@ func (sget *Sget) Prepare(argv []string) error {
 		return fmt.Errorf("failed because of too or few arguments, given %s", argv)
 	}
 	sget.URL = argv[0]
+	return nil
+}
+
+// RequestHeader request head
+func (sget *Sget) RequestHeader() error {
+	head, err := http.Head(sget.URL)
+	if err != nil {
+		return fmt.Errorf("failed to request head %s", err)
+	}
+	fmt.Println(head)
 	return nil
 }
