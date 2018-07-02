@@ -1,0 +1,9 @@
+strawberry
+pineapple
+banana
+pear
+apple
+cherry
+grapefruit
+grape
+peach
