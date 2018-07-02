@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"sync"
 )
 
 type File struct {
@@ -19,6 +20,7 @@ func (f File) Filename() string {
 	return path.Base(f.Uri)
 }
 
+// acceptRangesによってダウンロード方法を切り替える
 func (f File) Download(acceptRanges string) error {
 	if acceptRanges == "" {
 		return f.singleDownload()
@@ -47,21 +49,27 @@ func (f File) singleDownload() error {
 	return nil
 }
 
+// ファイルを分割ダウンロード
 func (f File) splitDownload() error {
 	splitNum := runtime.NumCPU()
 	splitBytes := f.SplitByteSize(int64(splitNum))
 	ranges := formatRange(splitBytes)
 	createFileMap := map[int]string{}
+
+	var wg sync.WaitGroup
 	for no, rangeValue := range ranges {
-		f.rangeDownload(no, rangeValue, createFileMap)
+		wg.Add(1)
+		go f.rangeDownload(&wg, no, rangeValue, createFileMap)
 	}
+	wg.Wait()
 	if err := f.joinSplitFiles(createFileMap); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (f File) rangeDownload(fileNo int, rangeValue string, createFiles map[int]string) error {
+func (f File) rangeDownload(wg *sync.WaitGroup, fileNo int, rangeValue string, createFiles map[int]string) error {
+	defer wg.Done()
 	req, _ := http.NewRequest("GET", f.Uri, nil)
 	req.Header.Set("RANGE", rangeValue)
 
@@ -85,6 +93,7 @@ func (f File) rangeDownload(fileNo int, rangeValue string, createFiles map[int]s
 	return nil
 }
 
+// 分割されたファイルを一つに結合させる
 func (f File) joinSplitFiles(createFiles map[int]string) error {
 	originFile, err := os.Create(f.Filename())
 	if err != nil {
