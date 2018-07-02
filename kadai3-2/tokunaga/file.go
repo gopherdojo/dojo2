@@ -8,6 +8,8 @@ import (
 	"path"
 	"runtime"
 	"sync"
+
+	"golang.org/x/sync/errgroup"
 )
 
 type File struct {
@@ -56,10 +58,16 @@ func (f File) splitDownload() error {
 	ranges := formatRange(splitBytes)
 	createFileMap := map[int]string{}
 
+	var eg errgroup.Group
 	var wg sync.WaitGroup
 	for no, rangeValue := range ranges {
 		wg.Add(1)
-		go f.rangeDownload(&wg, no, rangeValue, createFileMap)
+		eg.Go(func() error {
+			return f.rangeDownload(&wg, no, rangeValue, createFileMap)
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		return err
 	}
 	wg.Wait()
 	if err := f.joinSplitFiles(createFileMap); err != nil {
