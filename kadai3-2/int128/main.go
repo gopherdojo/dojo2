@@ -1,0 +1,44 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"path/filepath"
+
+	"github.com/gopherdojo/dojo2/kadai3-2/int128/download"
+)
+
+func main() {
+	// TODO: support flags
+	switch len(os.Args) {
+	case 2:
+		doDownload(os.Args[1])
+	default:
+		fmt.Fprintf(os.Stderr, "usage: %s URL\n", os.Args[0])
+		os.Exit(1)
+	}
+}
+
+func doDownload(url string) {
+	filename := filepath.Base(url)
+	if filename == "" {
+		filename = "file"
+	}
+
+	w, err := os.Create(filename)
+	if err != nil {
+		log.Fatalf("Could not create file %s: %s", filename, err)
+	}
+	defer w.Close()
+
+	log.Printf("Downloading %s to %s", url, filename)
+	d := download.New(url)
+	ctx := context.Background()
+	rng, err := d.GetContent(ctx, w)
+	if err != nil {
+		log.Fatalf("Could not download %s: %s", url, err)
+	}
+	log.Printf("Wrote %d bytes", rng.Length())
+}
