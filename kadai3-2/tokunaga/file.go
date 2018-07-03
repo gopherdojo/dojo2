@@ -7,8 +7,6 @@ import (
 	"os"
 	"path"
 	"runtime"
-	"sync"
-
 	"golang.org/x/sync/errgroup"
 )
 
@@ -58,26 +56,24 @@ func (f File) splitDownload() error {
 	ranges := formatRange(splitBytes)
 	createFileMap := map[int]string{}
 
-	var eg errgroup.Group
-	var wg sync.WaitGroup
+	eg := errgroup.Group{}
 	for no, rangeValue := range ranges {
-		wg.Add(1)
+		index := no
+		value := rangeValue
 		eg.Go(func() error {
-			return f.rangeDownload(&wg, no, rangeValue, createFileMap)
+			return f.rangeDownload(index, value, createFileMap)
 		})
 	}
 	if err := eg.Wait(); err != nil {
 		return err
 	}
-	wg.Wait()
 	if err := f.joinSplitFiles(createFileMap); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (f File) rangeDownload(wg *sync.WaitGroup, fileNo int, rangeValue string, createFiles map[int]string) error {
-	defer wg.Done()
+func (f File) rangeDownload(fileNo int, rangeValue string, createFiles map[int]string) error {
 	req, _ := http.NewRequest("GET", f.Uri, nil)
 	req.Header.Set("RANGE", rangeValue)
 
