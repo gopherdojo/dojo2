@@ -32,6 +32,9 @@ func splitRange(fileSize int, split int) []string {
 
 func getFileSize(ctx context.Context, url string) (max int, high int, err error) {
 	_, contentRange, err := rangeLoad(ctx, url, "0-1")
+	if err != nil {
+		return -1, -1, err
+	}
 	return parseContentRange(contentRange)
 }
 
@@ -49,8 +52,10 @@ func rangeLoad(ctx context.Context, url string, fileRange string) (body []byte, 
 	client := new(http.Client)
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
 		return errReturn(err)
+	}
+	if resp.StatusCode != 200 {
+		return nil, "", fmt.Errorf("GET not success")
 	}
 	body, err = ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
@@ -63,20 +68,23 @@ func rangeLoad(ctx context.Context, url string, fileRange string) (body []byte, 
 
 func parseContentRange(contentRange string) (max int, high int, err error) {
 	compile, err := regexp.Compile("\\d+-(\\d+)/(\\d+)")
+	errFunc := func(e error) (max int, high int, err error) {
+		return -1, -1, e
+	}
 	if err != nil {
-		return -1, -1, err
+		return errFunc(err)
 	}
 	match := compile.FindSubmatch([]byte(contentRange))
 	if len(match) != 3 {
-		return -1, -1, fmt.Errorf("index out of range")
+		return errFunc(fmt.Errorf("index out of range"))
 	}
 	high, err = strconv.Atoi(string(match[1]))
 	if err != nil {
-		return -1, -1, err
+		return errFunc(err)
 	}
 	max, err = strconv.Atoi(string(match[2]))
 	if err != nil {
-		return -1, -1, err
+		return errFunc(err)
 	}
 	return max, high, nil
 }

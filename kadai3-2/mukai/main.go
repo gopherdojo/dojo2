@@ -3,13 +3,24 @@ package main
 import (
 	"context"
 	"dojo2/kadai3-2/mukai/loader"
+	"flag"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
+var url *string
+var split *int
+
+func init() {
+	url = flag.String("u", "", "download url")
+	split = flag.Int("s", 10, "split size")
+}
+
 func main() {
+	flag.Parse()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(
@@ -25,9 +36,7 @@ func main() {
 		<-ctx.Done()
 		os.Exit(1)
 	}()
-	const Split = 200
-	const Url = "https://www.noao.edu/image_gallery/images/d7/cygloop-8000.jpg"
-	if err := loader.Download(ctx, Url, Split); err != nil {
+	if err := loader.Download(ctx, *url, *split); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
