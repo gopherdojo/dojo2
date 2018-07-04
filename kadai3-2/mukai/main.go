@@ -1,23 +1,13 @@
 package main
 
 import (
-	"net/http"
-	"os"
-	"regexp"
-	"strconv"
-	"io/ioutil"
+	"context"
+	"dojo2/kadai3-2/mukai/loader"
 	"fmt"
-	"time"
+	"os"
 	"os/signal"
 	"syscall"
-	"context"
-	"golang.org/x/sync/errgroup"
 )
-
-type PartialData struct {
-	index int
-	data []byte
-}
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -35,115 +25,10 @@ func main() {
 		<-ctx.Done()
 		os.Exit(1)
 	}()
-	start := time.Now().UnixNano()
 	const Split = 200
-	url := "https://www.noao.edu/image_gallery/images/d7/cygloop-8000.jpg"
-	fileSize, _, e := GetFileSize(ctx, url)
-	if e != nil {
+	const Url = "https://www.noao.edu/image_gallery/images/d7/cygloop-8000.jpg"
+	if err := loader.Download(ctx, Url, Split); err != nil {
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-
-	eg, ctx := errgroup.WithContext(ctx)
-	fileRanges := splitRange(fileSize, Split)
-	bodies := make([][]byte, len(fileRanges))
-	for i, v := range fileRanges {
-		loader := partialLoader{url: url, index: i, fileRange: v}
-		eg.Go(func() error {
-			return loader.storePartialData(ctx, bodies)
-		})
-	}
-	if e := eg.Wait(); e != nil {
-		fmt.Println(e)
-		os.Exit(1)
-	}
-	var result []byte
-	for _, v := range bodies {
-		result = append(result, v...)
-	}
-	ioutil.WriteFile("image.jpeg", result, 0666)
-	end := time.Now().UnixNano()
-	fmt.Println((end - start) / 1000 / 1000)
-}
-
-// return "0-100"
-func splitRange(fileSize int, split int) []string {
-	aFileSize := fileSize / split
-	var ranges []string
-	start := 0
-	end := 0
-	for i := 0; i < split; i++ {
-		if i == 0 {
-			start = 0
-		} else {
-			start = end + 1
-		}
-		end = end + aFileSize
-		ranges = append(ranges,  strconv.Itoa(start) + "-" + strconv.Itoa(end))
-	}
-	if fileSize % split != 0 {
-		ranges = append(ranges, strconv.Itoa(end + 1) + "-" + strconv.Itoa(fileSize))
-	}
-	return ranges
-}
-
-func GetFileSize(ctx context.Context, url string) (max int, high int, err error) {
-	_, contentRange, err := RangeLoad(ctx, url, "0-1")
-	return parseContentRange(contentRange)
-}
-
-func RangeLoad(ctx context.Context, url string, fileRange string) (body []byte, contentRange string, err error) {
-	errReturn := func(err error) ([]byte, string, error) {
-		return nil, "", err
-	}
-	var req *http.Request
-	req, err = http.NewRequest("GET", url, nil)
-	if err != nil {
-		return errReturn(err)
-	}
-	req = req.WithContext(ctx)
-	req.Header.Add("Range", "bytes=" + fileRange)
-	client := new(http.Client)
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return errReturn(err)
-	}
-	body, err = ioutil.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	if err != nil {
-		return errReturn(err)
-	}
-	contentRange = resp.Header.Get("content-range")
-	return body, contentRange, nil
-}
-
-func parseContentRange(contentRange string) (max int, high int, err error) {
-	compile := regexp.MustCompile("\\d+-(\\d+)/(\\d+)")
-	if err != nil {
-		return -1, -1, err
-	}
-	match := compile.FindSubmatch([]byte(contentRange))
-	high, err = strconv.Atoi(string(match[1]))
-	max, err = strconv.Atoi(string(match[2]))
-	if err != nil {
-		return -1, -1, err
-	}
-	return max, high, nil
-}
-
-type partialLoader struct {
-	url string
-	index int
-	fileRange string
-}
-
-func (p partialLoader) storePartialData(ctx context.Context, bodies [][]byte) error {
-	body, _, err := RangeLoad(ctx, p.url, p.fileRange)
-	if err != nil {
-		return err
-	}
-	data := PartialData{index: p.index, data: body}
-	bodies[data.index] = data.data
-	fmt.Println("index " + strconv.Itoa(data.index))
-	return nil
 }
