@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"syscall"
 	"context"
+	"golang.org/x/sync/errgroup"
 )
 
 type PartialData struct {
@@ -41,21 +42,20 @@ func main() {
 	if e != nil {
 		os.Exit(1)
 	}
+
+	eg, ctx := errgroup.WithContext(ctx)
 	fileRanges := splitRange(fileSize, Split)
 	bodies := make([][]byte, len(fileRanges))
-	chs := make([]chan PartialData, 0)
 	for i, v := range fileRanges {
-		ch := make(chan PartialData)
-		go storePartialData(ctx, ch, url, i, v)
-		chs = append(chs, ch)
+		loader := partialLoader{url: url, index: i, fileRange: v}
+		eg.Go(func() error {
+			return loader.storePartialData(ctx, bodies)
+		})
 	}
-
-	for _, c := range chs {
-		data := <- c
-		bodies[data.index] = data.data
-		fmt.Println(data.index)
+	if e := eg.Wait(); e != nil {
+		fmt.Println(e)
+		os.Exit(1)
 	}
-
 	var result []byte
 	for _, v := range bodies {
 		result = append(result, v...)
@@ -63,16 +63,6 @@ func main() {
 	ioutil.WriteFile("image.jpeg", result, 0666)
 	end := time.Now().UnixNano()
 	fmt.Println((end - start) / 1000 / 1000)
-}
-
-func storePartialData(ctx context.Context, ch chan <- PartialData, url string, index int, fileRange string) error {
-	body, _, err := RangeLoad(ctx, url, fileRange)
-	if err != nil {
-		return err
-	}
-	ch <- PartialData{index: index, data: body}
-	defer close(ch)
-	return nil
 }
 
 // return "0-100"
@@ -139,4 +129,21 @@ func parseContentRange(contentRange string) (max int, high int, err error) {
 		return -1, -1, err
 	}
 	return max, high, nil
+}
+
+type partialLoader struct {
+	url string
+	index int
+	fileRange string
+}
+
+func (p partialLoader) storePartialData(ctx context.Context, bodies [][]byte) error {
+	body, _, err := RangeLoad(ctx, p.url, p.fileRange)
+	if err != nil {
+		return err
+	}
+	data := PartialData{index: p.index, data: body}
+	bodies[data.index] = data.data
+	fmt.Println("index " + strconv.Itoa(data.index))
+	return nil
 }
