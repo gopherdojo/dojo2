@@ -1,18 +1,19 @@
 package main
 
 import (
-	"io"
 	"bufio"
-	"os"
 	"fmt"
-	"time"
+	"io"
 	"math/rand"
+	"os"
+	"time"
 )
 
 func main() {
 	ch := input(os.Stdin)
 	words, e := loadWords()
 	if e != nil {
+		fmt.Fprint(os.Stderr, e)
 		os.Exit(1)
 	}
 	correct := 0
@@ -24,10 +25,10 @@ FOR:
 		q := words[rand.Intn(len(words))]
 		fmt.Println("> " + q)
 		select {
-		case <- timeLimitCh:
+		case <-timeLimitCh:
 			break FOR
-		case a := <-ch:
-			if q == a {
+		case answer := <-ch:
+			if q == answer {
 				correct = correct + 1
 			}
 		}
