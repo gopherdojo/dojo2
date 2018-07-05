@@ -1,6 +1,6 @@
 # Quick start
 
-you can exex test file server via below command 
+you can exex test file server via below command
 
 ```bash
 $ cd server
@@ -15,4 +15,6 @@ $ go run main.go
 ```
 
 ##　反省
-まだコマンド引数によるダウンロード先指定とエラーハンドリングができていないが一旦提出
+まだキャンセルの実装ができていない。
+errgroupによるエラー処理を追加したが、全てのgorutineがちゃんととまているのかテストする術を調査中
+はじめてHeadメソッドを使ったので勉強になった。
