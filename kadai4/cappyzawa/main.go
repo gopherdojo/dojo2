@@ -47,6 +47,7 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 	h.logger.Info("draw a fortune",
 		zap.Int("code", http.StatusOK),
+		zap.String("date", response.Date.String()),
 		zap.String("result", response.Result))
 	w.Write([]byte(buf.String()))
 }
