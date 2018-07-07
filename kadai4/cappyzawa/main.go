@@ -22,7 +22,6 @@ type handler struct {
 }
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	defer h.logger.Sync()
 	if r.Method != "GET" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		h.logger.Error("not allowed",
@@ -54,6 +53,7 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	logger, _ := zap.NewProduction()
+	defer logger.Sync()
 	handler := handler{
 		logger: logger,
 		date:   time.Now(),
