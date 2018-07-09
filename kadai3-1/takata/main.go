@@ -67,7 +67,7 @@ func run(input io.Reader) int {
 		case <-time.After(limitTime * time.Second):
 			fmt.Fprintln(writer, "時間切れです")
 		case tw := <-ch:
-			if judge(w, tw) {
+			if w == tw {
 				fmt.Fprintln(writer, "正解")
 				answer++
 			} else {
@@ -77,15 +77,6 @@ func run(input io.Reader) int {
 	}
 	fmt.Fprintf(writer, "正解数: %d\n", answer)
 	return answer
-}
-
-func judge(expected string, actual string) bool {
-
-	if actual == expected {
-		return true
-	} else {
-		return false
-	}
 }
 
 func main() {
