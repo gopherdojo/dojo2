@@ -9,7 +9,7 @@ import (
 )
 
 type OmikujiHandler struct {
-	DateProvider DateProvider
+	TimeProvider TimeProvider
 }
 func (o OmikujiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	result := result{Data: o.omikuji()}
@@ -21,8 +21,8 @@ func (o OmikujiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o OmikujiHandler) omikuji() string {
-	now := o.DateProvider.Now()
-	if now.Month() == 1 && (1 <= now.Day() && now.Day() <= 3) {
+	time := o.TimeProvider.Time()
+	if time.Month() == 1 && (1 <= time.Day() && time.Day() <= 3) {
 		return "大吉"
 	}
 	i := rand.Intn(4)

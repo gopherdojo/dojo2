@@ -12,6 +12,6 @@ func init() {
 }
 
 func main() {
-	http.Handle("/", handler.HeaderMiddleWare(handler.OmikujiHandler{DateProvider: handler.NowTimeProvider{}}))
+	http.Handle("/", handler.HeaderMiddleWare(handler.OmikujiHandler{TimeProvider: handler.NowTimeProvider{}}))
 	http.ListenAndServe(":8080", nil)
 }

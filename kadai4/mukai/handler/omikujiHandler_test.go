@@ -30,7 +30,7 @@ func TestOmikujiHandler(t *testing.T) {
 			r := httptest.NewRequest("GET", "/", nil)
 			loc, _ := time.LoadLocation("Asia/Tokyo")
 			date := time.Date(2018, tt.fields.month, tt.fields.day, 0, 0, 0, 0, loc)
-			OmikujiHandler{DateProvider: ArbitraryTimeProvider{time: date}}.ServeHTTP(w, r)
+			OmikujiHandler{TimeProvider: ArbitraryTimeProvider{time: date}}.ServeHTTP(w, r)
 			rw := w.Result()
 			defer rw.Body.Close()
 			decoder := json.NewDecoder(rw.Body)
