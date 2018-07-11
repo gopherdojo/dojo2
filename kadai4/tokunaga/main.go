@@ -78,7 +78,7 @@ func encodeJson(p *omikuji) bytes.Buffer {
 }
 
 func (o *omikuji) pickUp(timer timer) {
-	if isOsyougatu(time.Now()) {
+	if isOsyougatu(timer.Now()) {
 		o.Result = getDaikiti()
 	} else {
 		o.Result = box[rand.Intn(5)]
