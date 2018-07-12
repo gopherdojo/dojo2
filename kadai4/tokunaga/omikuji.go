@@ -30,33 +30,32 @@ type timer interface {
 	Now() time.Time
 }
 
-type timeWrapper struct{}
-
-func (t timeWrapper) Now() time.Time {
-	return time.Now()
-}
-
-type Omikuji struct {
+type response struct {
 	Result string `json:"result"`
 }
 
-func (o Omikuji) open(w http.ResponseWriter, r *http.Request) {
-	o.pickUp(timeWrapper{})
+type omikuji struct {
+	timer
+	response
+}
+
+func (o omikuji) open(w http.ResponseWriter, r *http.Request) {
+	o.pickUp()
 	buf := encodeJson(&o)
 	fmt.Fprintf(w, buf.String())
 }
 
-func encodeJson(p *Omikuji) bytes.Buffer {
+func encodeJson(p *omikuji) bytes.Buffer {
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
-	if err := enc.Encode(p); err != nil {
+	if err := enc.Encode(p.response); err != nil {
 		log.Fatal(err)
 	}
 	return buf
 }
 
-func (o *Omikuji) pickUp(timer timer) {
-	if isOsyougatu(timer.Now()) {
+func (o *omikuji) pickUp() {
+	if isOsyougatu(o.timer.Now()) {
 		o.Result = getDaikiti()
 	} else {
 		o.Result = box[rand.Intn(5)]

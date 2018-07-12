@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"math/rand"
 	"net/http"
+	"time"
 )
 
 func init() {
@@ -22,8 +23,14 @@ func serRandSeed() error {
 	return err
 }
 
+type timeWrapper struct{}
+
+func (t timeWrapper) Now() time.Time {
+	return time.Now()
+}
+
 func main() {
-	omikuji := Omikuji{}
+	omikuji := omikuji{timer: timeWrapper{}}
 	http.HandleFunc("/omikuji", omikuji.open)
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
