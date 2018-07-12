@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"time"
 )
@@ -26,8 +25,12 @@ var syougatu = [...]string{
 	"01-03",
 }
 
-type timer interface {
+type nower interface {
 	Now() time.Time
+}
+
+type intner interface {
+	Intn(int) int
 }
 
 type response struct {
@@ -35,7 +38,8 @@ type response struct {
 }
 
 type omikuji struct {
-	timer
+	nower
+	intner
 	response
 }
 
@@ -55,10 +59,10 @@ func encodeJson(p *omikuji) bytes.Buffer {
 }
 
 func (o *omikuji) pickUp() {
-	if isOsyougatu(o.timer.Now()) {
+	if isOsyougatu(o.Now()) {
 		o.Result = getDaikiti()
 	} else {
-		o.Result = box[rand.Intn(5)]
+		o.Result = box[o.Intn(5)]
 	}
 
 }

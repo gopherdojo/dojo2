@@ -24,13 +24,18 @@ func serRandSeed() error {
 }
 
 type timeWrapper struct{}
+type randWrapper struct{}
 
 func (t timeWrapper) Now() time.Time {
 	return time.Now()
 }
 
+func (r randWrapper) Intn(n int) int {
+	return rand.Intn(n)
+}
+
 func main() {
-	omikuji := omikuji{timer: timeWrapper{}}
+	omikuji := omikuji{nower: timeWrapper{}, intner: randWrapper{}}
 	http.HandleFunc("/omikuji", omikuji.open)
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
