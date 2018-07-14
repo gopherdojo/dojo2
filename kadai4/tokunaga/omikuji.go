@@ -43,16 +43,16 @@ type omikuji struct {
 	response
 }
 
-func (o omikuji) open(w http.ResponseWriter, r *http.Request) {
+func (o *omikuji) open(w http.ResponseWriter, r *http.Request) {
 	o.pickUp()
-	buf := encodeJson(&o)
+	buf := o.encodeJson()
 	fmt.Fprintf(w, buf.String())
 }
 
-func encodeJson(p *omikuji) bytes.Buffer {
+func (o *omikuji) encodeJson() bytes.Buffer {
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
-	if err := enc.Encode(p.response); err != nil {
+	if err := enc.Encode(o.response); err != nil {
 		log.Fatal(err)
 	}
 	return buf
