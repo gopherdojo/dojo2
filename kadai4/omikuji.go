@@ -5,41 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
-	"time"
+
+	"github.com/gopherdojo/dojo2/kadai4/fortune"
 )
 
-type Fortune struct {
-	Content string `json:"content"`
-}
-
-var fortuneList = []string{"大吉", "中吉", "小吉", "吉", "末吉", "凶", "大凶"}
-
-func getCurrentTime() time.Time {
-	return time.Now()
-}
-
-func selectFortune() string {
-	t := getCurrentTime()
-	if t.Month() == 1 && (1 <= t.Day() && t.Day() <= 3) {
-		return selectFortuneOnlyDaikichi()
-	}
-	return selectFortuneRandom()
-}
-
-func selectFortuneOnlyDaikichi() string {
-	return "大吉"
-}
-
-func selectFortuneRandom() string {
-	rand.Seed(time.Now().UnixNano())
-	return fortuneList[rand.Int()%len(fortuneList)]
-}
-
 func handler(w http.ResponseWriter, r *http.Request) {
-	sf := selectFortune()
-	f := &Fortune{Content: sf}
+	var dq fortune.DefaultQlock
+	fs := fortune.FortuneSelector{Qlock: dq}
+	f := fs.SelectFortune()
+
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
 	if err := enc.Encode(f); err != nil {
@@ -49,6 +24,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	fmt.Println("Web Server Starting...")
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
 }
