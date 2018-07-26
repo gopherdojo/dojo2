@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -30,9 +29,7 @@ func TestHandler(t *testing.T) {
 	if err != nil {
 		t.Fatal("unexpected error")
 	}
-	fmt.Println(string(b))
 	for _, v := range rescase {
-		fmt.Println(string(v))
 		if v == string(b) {
 			return
 		}

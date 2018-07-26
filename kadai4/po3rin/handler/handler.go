@@ -3,7 +3,6 @@ package handler
 import (
 	"dojo2/kadai4/po3rin/domain"
 	"encoding/json"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -13,7 +12,6 @@ import (
 func Omikuzi(w http.ResponseWriter, r *http.Request) {
 	rand.Seed(time.Now().UnixNano())
 	i := rand.Intn(6)
-	fmt.Println(i)
 	var fortune string
 	switch i {
 	case 0:
