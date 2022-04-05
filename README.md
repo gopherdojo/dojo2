@@ -2,8 +2,8 @@
 - ```git clone https://github.com/chillout2san/dojo2.git```
 - ```cd ./dojo2/kadai1/chillout2san```
 - ```go build main.go```
-- ```./main -before {変換前拡張子} -after {変換後の拡張子} -path {相対パス}```
-- ```./main -before jpg -after png -path ./assets/photo.jpg```
+- ```./main -before {変換前拡張子} -after {変換後の拡張子} -path {ディレクトリ}```
+- ```./main -before jpg -after png -path ./```
 
 ### 備考
 - beforeとafterは省略可能。省略した場合、beforeはjpg、afterはpngになる。
