@@ -9,13 +9,13 @@ import (
 func main() {
 	beforeExtension := flag.String("before", "jpg", "変換前の拡張子")
 	afterExtension := flag.String("after", "png", "変換後の拡張子")
-	path := flag.String("path", "", "変換する写真のあるディレクトリ")
+	targetDir := flag.String("path", "", "変換する写真のあるディレクトリ")
 	flag.Parse()
 
-	isPathEmpty := *path == ""
+	isPathEmpty := *targetDir == ""
 	if isPathEmpty {
 		log.Fatal("ディレクトリが指定されていません。")
 	}
 
-	converter.Convert(*beforeExtension, *afterExtension, *path)
+	converter.Convert(*beforeExtension, *afterExtension, *targetDir)
 }
