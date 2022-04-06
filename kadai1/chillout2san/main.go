@@ -10,16 +10,20 @@ import (
 /*
 	ディレクトリが指定されていなかったり、拡張子がjpgもしくはpng以外で指定された際にerrorを返します。
 */
-func validate(beforeExtension, afterExtension, targetDir *string) error {
-	if *beforeExtension != "jpg" && *beforeExtension != "png" {
+func validate(beforeExtension, afterExtension, targetDir string) error {
+	if beforeExtension == afterExtension {
+		return errors.New("変更前と変更後の拡張子が同じです。")
+	}
+
+	if beforeExtension != "jpg" && beforeExtension != "png" {
 		return errors.New("変更前の拡張子はjpgもしくはpngのどちらかを指定してください。")
 	}
 
-	if *afterExtension != "jpg" && *afterExtension != "png" {
+	if afterExtension != "jpg" && afterExtension != "png" {
 		return errors.New("変更後の拡張子はjpgもしくはpngのどちらかを指定してください。")
 	}
 
-	if *targetDir == "" {
+	if targetDir == "" {
 		return errors.New("ディレクトリが指定されていません。")
 	}
 	return nil
@@ -31,7 +35,7 @@ func main() {
 	targetDir := flag.String("path", "", "変換する写真のあるディレクトリ")
 	flag.Parse()
 
-	if err := validate(beforeExtension, afterExtension, targetDir); err != nil {
+	if err := validate(*beforeExtension, *afterExtension, *targetDir); err != nil {
 		log.Fatal(err)
 	}
 
