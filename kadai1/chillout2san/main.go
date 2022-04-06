@@ -17,5 +17,9 @@ func main() {
 		log.Fatal("ディレクトリが指定されていません。")
 	}
 
-	converter.Convert(*beforeExtension, *afterExtension, *targetDir)
+	err := converter.Convert(*beforeExtension, *afterExtension, *targetDir)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

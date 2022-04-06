@@ -1,15 +1,20 @@
 package converter
 
 import (
+	"errors"
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func Convert(beforeExtension string, afterExtension string, targetDir string) {
+/*
+	Convertは第三引数のディレクトリ以下を再起的に処理します。
+	第一引数に与えられた拡張子と現在の拡張子が異なる場合、errorを返します。
+	第二引数に与えられた拡張子の画像に変更します。
+*/
+func Convert(beforeExtension string, afterExtension string, targetDir string)error {
 	targetPathList := []string{}
 
 	err := filepath.WalkDir(targetDir, func(path string, info fs.DirEntry, err error)error {
@@ -28,14 +33,14 @@ func Convert(beforeExtension string, afterExtension string, targetDir string) {
 	})
 
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 
 	for _, targetPath := range targetPathList {
 		presentExtension := filepath.Ext(targetPath)
 
 		if presentExtension != "."+beforeExtension {
-			return
+			return errors.New("指定された拡張子が実際の拡張子と異なります。")
 		}
 	
 		dir, fileName := filepath.Split(targetPath)
@@ -44,7 +49,9 @@ func Convert(beforeExtension string, afterExtension string, targetDir string) {
 	
 		newPath := filepath.Join(dir, newFileName)
 		if err := os.Rename(targetPath, newPath); err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
+
+	return nil
 }
