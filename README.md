@@ -1,16 +1,11 @@
-# ＃2 Gopher道場
-＃2 Gopher道場用のリポジトリです。
+### 動作方法
+- ```git clone https://github.com/chillout2san/dojo2.git```
+- ```cd ./dojo2/kadai1/chillout2san```
+- ```go build main.go```
+- ```./main -before {変換前拡張子} -after {変換後の拡張子} -path {ディレクトリ}```
+- ```./main -before jpg -after png -path ./```
 
-connpass: https://mercari.connpass.com/event/89133/
-
-## 課題の提出方法
-
-1回目の課題を提出する場合は次のようにコードを書いて下さい。
-
-* ブランチ名を`kadai1-tenntenn`のようにする
-* `kadai1/tenntenn`のようにディレクトリを作る
-* READMEに説明や文章による課題の回答を書く
-* PRを送る
-
-※FBには時間がかかる可能性があります。
-
+### 備考
+- beforeとafterは省略可能。省略した場合、beforeはjpg、afterはpngになる。
+- pathは省略不可。省略した場合、エラーを投げる。
+- 現在のファイルの拡張子とbeforeの拡張子が異なる場合、エラーを投げる。
