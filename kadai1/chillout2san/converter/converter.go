@@ -44,8 +44,15 @@ func Convert(beforeExtension string, afterExtension string, targetDir string) er
 			return errors.New("指定された拡張子が実際の拡張子と異なります。")
 		}
 
-		image := imagehandler.Decode(targetPath)
-		imagehandler.Encode(image, beforeExtension, afterExtension, targetPath)
+		image, err := imagehandler.Decode(targetPath)
+		if err != nil {
+			return err
+		}
+
+		err = imagehandler.Encode(image, beforeExtension, afterExtension, targetPath)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

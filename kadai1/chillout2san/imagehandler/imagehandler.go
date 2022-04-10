@@ -1,7 +1,6 @@
 package imagehandler
 
 import (
-	errorhandle "dojo/kadai1/chillout2san/errorhandler"
 	"image"
 	"image/jpeg"
 	"image/png"
@@ -13,39 +12,52 @@ import (
 /*
 	画像オブジェクトを返却します。
 */
-func Decode(targetPath string) image.Image {
+func Decode(targetPath string) (image.Image, error) {
 	file, err := os.Open(targetPath)
-	errorhandle.AlertError(err)
 	defer file.Close()
+	if err != nil {
+		return nil, err
+	}
 
 	image, _, err := image.Decode(file)
-	errorhandle.AlertError(err)
-
-	return image
+	if err != nil {
+		return nil, err
+	}
+	return image, nil
 }
 
 /*
 	画像を出力します。
 */
-func Encode(image image.Image, beforeExtension string, afterExtension string, targetPath string) {
+func Encode(image image.Image, beforeExtension string, afterExtension string, targetPath string)error {
 	dir, fileName := filepath.Split(targetPath)
 	newFileName := strings.Replace(fileName, "."+beforeExtension, "."+afterExtension, 1)
 	newPath := filepath.Join(dir, newFileName)
 
 	outPath, err := os.Create(newPath)
-	errorhandle.AlertError(err)
+	if err != nil {
+		return nil
+	}
 	defer outPath.Close()
 
 	if afterExtension == "jpg" {
 		err := jpeg.Encode(outPath, image, nil)
-		errorhandle.AlertError(err)
+		if err != nil {
+			return err
+		}
 	}
 
 	if afterExtension == "png" {
 		err := png.Encode(outPath, image)
-		errorhandle.AlertError(err)
+		if err != nil {
+			return err
+		}
 	}
 
 	err = os.Remove(targetPath)
-	errorhandle.AlertError(err)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
